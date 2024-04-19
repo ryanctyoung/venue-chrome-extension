@@ -4,3 +4,6 @@ Still debating on using the following tools:
 
 React or just Redux for state management
 modules
+
+Next:
+Refine observer to work when switching to week view

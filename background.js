@@ -5,28 +5,17 @@ function syncListener() {
   });
 }
 
-chrome.runtime.onMessage.addListener(
-  function (message, sender, sendResponse) {
-    if (message.message === "loading_complete") {
-      chrome.webRequest.onCompleted.removeListener(syncListener)
+/*
+  Main listener.Receives update from content script upon render, adds listener for sync.sync web requests
+*/
+// chrome.runtime.onMessage.addListener(
+//   function (message, sender, sendResponse) {
+//     if (message.message === "loading_complete") {
+//       // chrome.webRequest.onCompleted.removeListener(syncListener)
 
-      chrome.webRequest.onCompleted.addListener(
-        syncListener,
-        {urls: ['https://calendar.google.com/calendar/*/sync.sync']}
-      )
-    }
-  })
-
-// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-//   if (changeInfo.status === 'unloaded') {
-//     chrome.webRequest.onCompleted.removeListener(syncListener)
-//     return
-//   }
-//   else if (changeInfo.status === 'complete') {
-//     chrome.webRequest.onCompleted.addListener(
-//       syncListener,
-//       {urls: ['https://calendar.google.com/calendar/*/sync.sync']}
-//     )
-//   }
-// })
-
+//       chrome.webRequest.onCompleted.addListener(
+//         syncListener,
+//         {urls: ['https://calendar.google.com/calendar/*/sync.sync']}
+//       )
+//     }
+//   })

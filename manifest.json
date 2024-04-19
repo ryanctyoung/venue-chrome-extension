@@ -10,6 +10,7 @@
       ],
       "js": [
         "misc/jquery.3.7.1.min.js",
+        "observer.js",
         "src.js"
       ],
       "css": [
