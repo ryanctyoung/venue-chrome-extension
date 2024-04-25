@@ -1,14 +1,15 @@
-// venue data will be saved as an array of strings for now
-// venues should be persisted through Calendar description data
-const initialState = {venue: []}
+const initialState = {events:[], venues:[]}
 
-function venueReducer(state = initialState, action) {
-  if (action.type === 'venue/update') {
+function dayReducer(state = initialState, action) {
+  if (action.type === 'day/change') {
     const { payload } = action
-
+    // handle day change animation
+    // fadeEvents()
+    // fadeHeaders()
+    // get current
     return {
       ...state,
-      venue: payload
+      
     }
   }
 }

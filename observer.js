@@ -6,6 +6,8 @@ setTimeout(() => { observerDelay = 20; }, 5000);
 function postObserverCallbacks(observer, mutationList) {
   timeoutId = null;
   observer.disconnect();
+  // if mutation involves day change, perform event transition animation on the existing events in the redux store.
+  // Afterwards, update the redux store with the new events. 
   collectEventsCallback(mutationList);
   observer.observe(document.querySelector(observe_selector),
     {
@@ -24,7 +26,7 @@ function observerCallback(mutationList, observer) {
 }
 
 
-const observer = new MutationObserver(observerCallback);
+const eventsObserver = new MutationObserver(observerCallback);
 
 function addObserverIfDesiredNodeAvailable(selector) {
   var observed = document.querySelector(selector);
@@ -34,7 +36,7 @@ function addObserverIfDesiredNodeAvailable(selector) {
       window.setTimeout(addObserverIfDesiredNodeAvailable,100);
       return;
   }
-  observer.observe(observed,
+  eventsObserver.observe(observed,
     {
       childList: true,
       // attributes: true,

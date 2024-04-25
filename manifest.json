@@ -2,7 +2,6 @@
   "manifest_version": 3,
   "name": "Venue Calendar",
   "version": "1.0",
-  "description": "Implements venue timeline view onto Google Calendar",
   "content_scripts": [
     {
       "matches": [
@@ -11,10 +10,14 @@
       "js": [
         "misc/jquery.3.7.1.min.js",
         "observer.js",
+        "language.js",
         "src.js"
       ],
       "css": [
         "style.css"
+      ],
+      "web_accessible_resources": [
+        "text.json"
       ],
       "runAt": "document_idle"
     }
@@ -23,10 +26,7 @@
     "service_worker": "background.js",
     "type": "module"
   },
-  "permissions": [
-    "webRequest",
-    "tabs"
-  ],
+
   "host_permissions": [
     "https://calendar.google.com/calendar*"
   ]

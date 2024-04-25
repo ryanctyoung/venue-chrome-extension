@@ -2,10 +2,10 @@
 const test_venues = ['Test 1', 'Test 2']
 const venue_regex = /(?<=Location: ).[^,]+/
 const px_regex = /([^a-z])/
-const day_regex = /\/calendar.*\/day\/.*/
+const day_regex = /\/calendar.*\/day/
 const event_selector = "div[role=button][data-eventid]"
-// const presentation_selector = "div[role=presentation][jsname=ixxhSe]"
 const observe_selector = "div[class=SGWAac]"
+const view_mode_selector = "[jsname='jnPWCc'] > span[jsname='V67aGc'][class='VfPpkd-vQzf8d']"
 const column_header_selector = "div[class=Ifvtsc]"
 const initial_spacing_selector = "div[class=fimTmc]"
 const headerClassName = "venueHeader"
@@ -19,12 +19,15 @@ function dec_to_px(x) {
 
 function px_to_dec(x) {
   return x.match(px_regex)
-  '10px'.match(/([^a-z])/)
 }
 
 function collectEventsCallback(mutationList) {
   console.log('collectEventsCallback')
-  if (!day_regex.test(window.location.pathname)) {
+  viewModeElement = document.querySelector(view_mode_selector)
+  // getLocalizedString('day')
+  // get calendar mode by reading the dropdown instead: <span jsname="V67aGc"> Day </span>
+  if (viewModeElement.textContent !== 'Day') {
+    console.log(viewModeElement.textContent)
     return
   }
 
@@ -42,13 +45,15 @@ function collectEventsCallback(mutationList) {
     return {element: event, venue: event.outerText.match(venue_regex)? event.outerText.match(venue_regex)[0] : 'None'}
   })
   const venue_labels = [...new Set(events.map(e => e.venue))].sort()
-  const venue_headers = venue_labels.map((label) => {
-    const header = document.createElement('div')
-    header.className = headerClassName
-    header.textContent = label
-    return header
-  })
-  flexbox.replaceChildren(...venue_headers)
+  if (venue_labels.length > 1 || !(venue_labels.includes('None'))) {
+    const venue_headers = venue_labels.map((label) => {
+      const header = document.createElement('div')
+      header.className = headerClassName
+      header.textContent = label
+      return header
+    })
+    flexbox.replaceChildren(...venue_headers)  
+  }
 
   events.map(e => {
     const index = venue_labels.findIndex((label) => e.venue === label) ?? 0
@@ -60,24 +65,6 @@ function collectEventsCallback(mutationList) {
     e.element.style.setProperty("left", dec_to_px(finalSpacing), "important")
   })
 }
-
-
-// url for Chrome Listener event documentation: https://developer.chrome.com/docs/extensions/reference/api/webRequest
-function init() {
-  console.log('init()')
-  // chrome.runtime.onMessage.addListener(
-  //   function (message, sender, sendResponse) {
-  //     if (message.action === "eventCallback") {
-  //       console.log("received message");
-  //       collectEventsCallback()
-  //     }
-  // });
-  chrome.runtime.sendMessage({message:'loading_complete'})
-
-}
-
-init()
-
 
 //from observer.js
 addObserverIfDesiredNodeAvailable(observe_selector);
