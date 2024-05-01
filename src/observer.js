@@ -19,7 +19,7 @@ function postObserverCallbacks(observer, mutationList) {
 }
 
 function observerCallback(mutationList, observer) {
-  // console.log(mutationList)
+  console.log(mutationList)
   if (timeoutId)
     clearTimeout(timeoutId);
   timeoutId = setTimeout(() => postObserverCallbacks(observer, mutationList), observerDelay);

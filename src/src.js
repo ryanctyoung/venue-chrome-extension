@@ -10,6 +10,7 @@ const column_header_selector = "div[class='Ifvtsc']"
 const initial_spacing_selector = "div[class='fimTmc']"
 const event_grid_selector = "div[class='Tmdkcc elYzab-cXXICe-Hjleke']"
 const headerClassName = "venueHeader"
+const preset_venue_sync_name = "default_venues"
 const max_column_width = 250
 const column_margin = 5
 const overlap_spacing = 5
@@ -17,7 +18,8 @@ const font_size = 26
 const minutes_in_hour = 60
 const minutes_in_half_day = 12 * minutes_in_hour
 const minutes_in_day = minutes_in_half_day * 2
-const preset_venues = []
+let preset_venues = []
+
 
 function dec_to_px(x) {
   return `${x}px`
@@ -26,6 +28,23 @@ function dec_to_px(x) {
 function px_to_dec(x) {
   return x.match(px_regex)
 }
+
+const readSyncStorage = async (key) => {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get([key], function (result) {
+      if (result[key] === undefined) {
+        reject();
+      } else {
+        resolve(result[key]);
+      }
+    });
+  });
+};
+
+preset_venues = chrome.storage.sync.get([preset_venue_sync_name]).then((result) => {
+  preset_venues = result.default_venues
+})
+
 
 function getEventTimes(text) {
   let startString = ''
@@ -69,9 +88,11 @@ function collectEventsCallback(mutationList) {
   // getLocalizedString('day')
   // get calendar mode by reading the dropdown instead: <span jsname="V67aGc"> Day </span>
   if (viewModeElement.textContent !== 'Day') {
-    // console.log(viewModeElement.textContent)
+    console.log(viewModeElement.textContent)
     return
   }
+
+  let venue_labels = []
 
   // Create Header Flexbox
   const flexbox = document.createElement('div')
@@ -92,7 +113,7 @@ function collectEventsCallback(mutationList) {
   const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
     return {element: event, venue: event.outerText.match(venue_regex)? event.outerText.match(venue_regex)[0] : 'None'}
   })
-  const venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue)))].sort()
+  venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue)))].sort()
   if (venue_labels.length > 1 || !(venue_labels.includes('None'))) {
     const venue_headers = venue_labels.map((label) => {
       const header = document.createElement('div')
@@ -104,8 +125,8 @@ function collectEventsCallback(mutationList) {
   }
 
   eventGrid?.style.setProperty('width', dec_to_px(flexbox.offsetWidth + initialSpacing + (2*column_margin)))
+  columnHeader.scrollLeft = eventGrid?.parentElement.scrollLeft
   eventGrid?.parentElement.addEventListener("scroll", (e) => {
-    console.log(e.target.scrollLeft)
     columnHeader.scrollLeft = e.target.scrollLeft
   })
 
@@ -144,10 +165,7 @@ function collectEventsCallback(mutationList) {
 }
 
 console.log('Initializing Calendar Venue...')
-chrome.storage.sync.get(["default_venues"]).then((result) => {
-  preset_venues.push(...result.default_venues)
-  console.log(preset_venues)
-})
+
 
 // // listen for potential update from popup
 // chrome.runtime.onMessage.addListener(msgObj => {
