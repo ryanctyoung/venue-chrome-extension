@@ -1,9 +1,19 @@
 [Example of Calendar Extension](https://github.com/padster/CalendarThemeExtension)
 
-Next:
-Use Redux to help transition animation (implement Fade transition instead of native sliding)
+Next Items:
+- Multi-event creation with multiple locations
+- Preset/default location headers
+    storage.local ? or use [Calendar List API](https://www.googleapis.com/calendar/v3/users/me/calendarList)
 
-For now, implement state management for current event infrastructure
+- Week view
 
-Keep track of old and new events and headers (before and after)
-  New elements should have their display be invisible while the old elements are allowed to fade completely
+  const flexbox = document.createElement('div')
+  flexbox.id = 'column-header-flexbox'
+  flexbox.style.setProperty('display', 'flex')
+  flexbox.style.setProperty('flex-direction', 'row')
+  columnHeader = document.querySelector("div[class=mDPmMe]")
+  spacingElement = document.querySelector(initial_spacing_selector)
+  initialSpacing =  spacingElement?.offsetWidth
+  initialSpacing += spacingElement ? parseInt(getComputedStyle(spacingElement).marginLeft) : 0
+  columnHeader?.querySelector('#column-header-flexbox')?.remove()
+  columnHeader?.insertBefore(flexbox, columnHeader.firstChild)

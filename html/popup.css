@@ -1,0 +1,33 @@
+.popup-container {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+
+  .popup-header {
+    align-self: center;
+    margin: 0 0 25px 0;
+    font-size: 29px;
+  }
+
+  .popup-input-label {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .popup-subtitle {
+    font-size: 10px;
+    color: grey;
+  }
+
+  button#save {
+    align-self: flex-end;
+    width: 75px;
+    height: 40px;
+    margin: 25px 10px 0 0;
+    border: 1px solid black;
+    border-radius: 8px;
+    background-color: #4C68F5;
+    color: white;
+    font-weight: 700;
+  }
+}

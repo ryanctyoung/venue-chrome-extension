@@ -9,9 +9,10 @@
       ],
       "js": [
         "misc/jquery.3.7.1.min.js",
-        "observer.js",
-        "language.js",
-        "src.js"
+        "src/observer.js",
+        "src/language.js",
+        "src/popup.js",
+        "src/src.js"
       ],
       "css": [
         "style.css"
@@ -22,11 +23,16 @@
       "runAt": "document_idle"
     }
   ],
+  "action": {
+    "default_popup": "html/popup.html"
+  },
   "background": {
-    "service_worker": "background.js",
+    "service_worker": "src/background.js",
     "type": "module"
   },
-
+  "permissions": [
+    "storage"
+  ],
   "host_permissions": [
     "https://calendar.google.com/calendar*"
   ]
