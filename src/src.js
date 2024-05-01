@@ -11,6 +11,7 @@ const initial_spacing_selector = "div[class='fimTmc']"
 const event_grid_selector = "div[class='Tmdkcc elYzab-cXXICe-Hjleke']"
 const headerClassName = "venueHeader"
 const preset_venue_sync_name = "default_venues"
+const empty_venue_placeholder = 'Other'
 const max_column_width = 250
 const column_margin = 5
 const overlap_spacing = 5
@@ -111,10 +112,10 @@ function collectEventsCallback(mutationList) {
 
   // form - {element: HTMLElement, venue: string}
   const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
-    return {element: event, venue: event.outerText.match(venue_regex)? event.outerText.match(venue_regex)[0] : 'None'}
+    return {element: event, venue: event.outerText.match(venue_regex)? event.outerText.match(venue_regex)[0] : empty_venue_placeholder}
   })
-  venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue)))].sort()
-  if (venue_labels.length > 1 || !(venue_labels.includes('None'))) {
+  venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue)))].sort((a,b) => a < b ? (a === empty_venue_placeholder ? 1 : -1) : 1)
+  if (venue_labels.length > 1 || !(venue_labels.includes(empty_venue_placeholder))) {
     const venue_headers = venue_labels.map((label) => {
       const header = document.createElement('div')
       header.className = headerClassName
