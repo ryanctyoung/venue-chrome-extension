@@ -42,7 +42,11 @@ const readSyncStorage = async (key) => {
   });
 };
 
-preset_venues = chrome.storage.sync.get([preset_venue_sync_name]).then((result) => {
+chrome.storage.sync.get([preset_venue_sync_name]).then((result) => {
+  console.log(result.default_venues)
+  if(result.default_venues.length === 1 && result.default_venues[0].trim().length === 0){
+    return
+  }
   preset_venues = result.default_venues
 })
 
@@ -63,6 +67,7 @@ function getEventTimes(text) {
     return Math.min(minutes, minutes_in_day - 1)
   }
 
+  console.log(text)
   if (text.includes(',')) {
     startString = text.split(',')[0]
     startTime = stringToMinutes(startString)
@@ -126,16 +131,19 @@ function collectEventsCallback(mutationList) {
   }
 
   eventGrid?.style.setProperty('width', dec_to_px(flexbox.offsetWidth + initialSpacing + (2*column_margin)))
-  columnHeader.scrollLeft = eventGrid?.parentElement.scrollLeft
-  eventGrid?.parentElement.addEventListener("scroll", (e) => {
-    columnHeader.scrollLeft = e.target.scrollLeft
-  })
+  if (columnHeader != null) {
+    columnHeader.scrollLeft = eventGrid?.parentElement.scrollLeft
+    eventGrid?.parentElement.addEventListener("scroll", (e) => {
+      columnHeader.scrollLeft = e.target.scrollLeft
+    })
+  }
+
 
   // form - {start, end, stack}
   const overlapMapper = venue_labels.reduce((acc, curr) => (acc[curr] = [], acc) , {})
 
   events.map(e => {
-    const eventTimeStamp = e.element.querySelector("div[class*='lhydbb gVNoLb  EiZ8Dd'], div[class='b0NTye']")?.textContent
+    const eventTimeStamp = e.element.querySelector("div[class*='lhydbb gVNoLb  EiZ8Dd'], div[class='b0NTye'], span[class='EWOIrf']")?.textContent
     
     // form - {startTime, endTime}
     timeStamp = getEventTimes(eventTimeStamp)
