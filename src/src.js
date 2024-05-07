@@ -113,13 +113,14 @@ function collectEventsCallback(mutationList) {
   initialSpacing += spacingElement ? parseInt(getComputedStyle(spacingElement).marginLeft) : 0
   columnHeader?.style.setProperty('width', '100%')
   columnHeader?.style.setProperty('overflow-x', 'hidden')
+  columnHeader?.style.setProperty("word-wrap", "break-word")
   columnHeader?.replaceChildren(flexbox)
 
   // form - {element: HTMLElement, venue: string}
   const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
     return {element: event, venue: event.outerText.match(venue_regex)? event.outerText.match(venue_regex)[0] : empty_venue_placeholder}
   })
-  venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue)))].sort((a,b) => a < b ? (a === empty_venue_placeholder ? 1 : -1) : 1)
+  venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue).sort((a,b) => a < b ? (a === empty_venue_placeholder ? 1 : -1) : 1)))]
   if (venue_labels.length > 1 || !(venue_labels.includes(empty_venue_placeholder))) {
     const venue_headers = venue_labels.map((label) => {
       const header = document.createElement('div')
