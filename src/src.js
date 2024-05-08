@@ -9,6 +9,7 @@ const view_mode_selector = "[jsname='jnPWCc'] > span[jsname='V67aGc'][class='VfP
 const column_header_selector = "div[class='Ifvtsc']"
 const initial_spacing_selector = "div[class='fimTmc']"
 const event_grid_selector = "div[class='Tmdkcc elYzab-cXXICe-Hjleke']"
+const event_timestamp_selector = "div[class*='lhydbb gVNoLb  EiZ8Dd'], div[class='b0NTye'], span[class='EWOIrf']"
 const headerClassName = "venueHeader"
 const preset_venue_sync_name = "default_venues"
 const empty_venue_placeholder = 'Other'
@@ -94,7 +95,11 @@ function collectEventsCallback(mutationList) {
   // getLocalizedString('day')
   // get calendar mode by reading the dropdown instead: <span jsname="V67aGc"> Day </span>
   if (viewModeElement.textContent !== 'Day') {
-    console.log(viewModeElement.textContent)
+    Array.from(document.querySelectorAll(event_selector)).map(event => {
+      event.style.margin = ""
+      event.style.left = ""
+      event.style.width = "calc(100% + 0px)"
+    })
     return
   }
 
@@ -144,7 +149,7 @@ function collectEventsCallback(mutationList) {
   const overlapMapper = venue_labels.reduce((acc, curr) => (acc[curr] = [], acc) , {})
 
   events.map(e => {
-    const eventTimeStamp = e.element.querySelector("div[class*='lhydbb gVNoLb  EiZ8Dd'], div[class='b0NTye'], span[class='EWOIrf']")?.textContent
+    const eventTimeStamp = e.element.querySelector(event_timestamp_selector)?.textContent
     
     // form - {startTime, endTime}
     timeStamp = getEventTimes(eventTimeStamp)
