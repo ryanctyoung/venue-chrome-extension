@@ -9,9 +9,17 @@
       ],
       "js": [
         "misc/jquery.3.7.1.min.js",
+        "src/helper/index.js",
+        "src/vars/selectors.js",
+        "src/vars/style.js",
+        "src/vars/regex.js",
         "src/observer.js",
         "src/language.js",
         "src/popup.js",
+
+        "src/modes/day.js",
+        "src/modes/week.js",
+
         "src/src.js"
       ],
       "css": [
