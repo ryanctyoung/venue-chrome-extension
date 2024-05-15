@@ -12,3 +12,49 @@
   border-radius: 10px;
   margin: 0 10px 0 10px;
 }
+
+
+.venue-location-dropdown {
+  position: relative;
+  display: inline-block;
+
+  .venue-location-button {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    align-self: center;
+    cursor: pointer;
+  
+    img {
+      height: 15px;
+      width: 15px;
+    }
+  }
+
+  .venue-location-content {
+    display: none;
+    position: fixed;
+    background-color: #f1f1f1;
+    overflow: auto;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+
+    a {
+      color: black;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      cursor: pointer;
+    }
+
+    a:hover {
+      background-color: #ddd;
+    }
+  }
+
+  .venue-location-content.show {
+    display: block;
+  }
+}
+

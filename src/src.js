@@ -46,7 +46,6 @@ function getEventTimes(text) {
     return Math.min(minutes, minutes_in_day - 1)
   }
 
-  console.log(text)
   if (text.includes(',')) {
     startString = text.split(',')[0]
     startTime = stringToMinutes(startString)
@@ -70,6 +69,9 @@ function getEventTimes(text) {
 function collectEventsCallback(mutationList) {
   // console.log('collectEventsCallback')
   viewModeElement = document.querySelector(view_mode_selector)
+
+  // const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+
   // getLocalizedString('day')
   // get calendar mode by reading the dropdown instead: <span jsname="V67aGc"> Day </span>
   if (viewModeElement.textContent === 'Day') {
@@ -78,8 +80,16 @@ function collectEventsCallback(mutationList) {
   else if (viewModeElement.textContent === 'Week') {
     weekModeRender()
   }
-
 }
+
+function eventModalCallback(mutationList) {
+  const eventModal = document.querySelector(event_modal_selector)
+  if (eventModal != null) {
+    eventModalRender(eventModal)
+  }
+}
+
+
 
 console.log('Initializing Calendar Venue...')
 
@@ -90,5 +100,6 @@ console.log('Initializing Calendar Venue...')
 // });
 
 //from observer.js
-addObserverIfDesiredNodeAvailable(observe_selector);
+addObserverIfDesiredNodeAvailable(observe_selector, collectEventsCallback);
+addObserverIfDesiredNodeAvailable(modal_overlay_selector, eventModalCallback);
 
