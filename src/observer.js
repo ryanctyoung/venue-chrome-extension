@@ -1,34 +1,19 @@
+function addObserverIfDesiredNodeAvailable(selector, callBack) {
+  function postObserverCallbacks(mutationList, observer) {
+    observer.disconnect();
+    // if mutation involves day change, perform event transition animation on the existing events in the redux store.
+    callBack(mutationList);
+    observer.observe(document.querySelector(selector),
+      {
+        childList: true,
+        // attributes: true,
+        subtree: true
+      }
+    )
+  }
+  
+  const eventsObserver = new MutationObserver(postObserverCallbacks);
 
-let timeoutId = null;
-let observerDelay = 250;
-setTimeout(() => { observerDelay = 20; }, 5000);
-
-function postObserverCallbacks(observer, mutationList) {
-  timeoutId = null;
-  observer.disconnect();
-  // if mutation involves day change, perform event transition animation on the existing events in the redux store.
-  // Afterwards, update the redux store with the new events. 
-  collectEventsCallback(mutationList);
-  observer.observe(document.querySelector(observe_selector),
-    {
-      childList: true,
-      // attributes: true,
-      subtree: true
-    }
-  )
-}
-
-function observerCallback(mutationList, observer) {
-  console.log(mutationList)
-  if (timeoutId)
-    clearTimeout(timeoutId);
-  timeoutId = setTimeout(() => postObserverCallbacks(observer, mutationList), observerDelay);
-}
-
-
-const eventsObserver = new MutationObserver(observerCallback);
-
-function addObserverIfDesiredNodeAvailable(selector) {
   var observed = document.querySelector(selector);
   if(!observed) {
       //The node we need does not exist yet.
