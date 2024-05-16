@@ -25,6 +25,9 @@ function dayModeRender() {
   if (venue_labels.length > 1 || !(venue_labels.includes(empty_venue_placeholder))) {
     const venue_headers = venue_labels.map((label) => {
       const header = document.createElement('div')
+      header.style.width = dec_to_px(max_column_width - (columnMargins*2))
+      header.style.marginLeft = dec_to_px(columnMargins)
+      header.style.marginRight = dec_to_px(columnMargins)
       header.className = headerClassName
       header.textContent = label
       return header

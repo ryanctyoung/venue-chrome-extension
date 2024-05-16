@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Venue Calendar",
-  "version": "1.021",
+  "version": "1.022",
   "description": "Implements column view based on location in Google Calendar.",
   "content_scripts": [
     {
@@ -17,7 +17,7 @@
         "src/vars/regex.js",
         "src/observer.js",
         "src/language.js",
-        "src/popup.js",
+        "src/components/popup.js",
 
         "src/modes/day.js",
         "src/modes/week.js",
@@ -40,10 +40,6 @@
   }],
   "action": {
     "default_popup": "html/popup.html"
-  },
-  "background": {
-    "service_worker": "src/background.js",
-    "type": "module"
   },
   "permissions": [
     "storage"

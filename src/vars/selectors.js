@@ -15,6 +15,8 @@ const event_modal_location_label_selector = "div[jsname='TmcEkb'] div[class='rdg
 const event_modal_location_focus_selector = "div[class~='BVTBSc'] div[class='drQEgd'] input"
 const event_modal_location_input_selector = "div[class='YwLf7b XsN7kf']"
 
+// event edit page: class='FrSOzf'
+
 const headerClassName = "venueHeader"
 const preset_venue_sync_name = "default_venues"
 const empty_venue_placeholder = 'Other'
