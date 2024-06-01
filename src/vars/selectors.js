@@ -9,7 +9,15 @@ const event_timestamp_selector = "div[class*='lhydbb gVNoLb  EiZ8Dd'], div[class
 
 const day_column_selector = "h2[class='hI2jVc']"
 
+const create_button = "div[class='JAPqpe K0NPx']"
+const create_event_interact_selector = "div[class~='XsRa1c']" // there is a trailing whitespace in the full class name
+
 const event_modal_selector = "div[jsname='ssXDle']"
+
+const event_modal_time_preinput_selector = "div[class='Shmoqf xI9Bs jzox1'] button"
+const event_modal_time_input_selector = "div[class='JHD0Fd'] input"
+const event_modal_time_options_selector = "div[class='w8UdJc']"
+
 const event_modal_location_selector = "div[jsname='TmcEkb'] div[class='Shmoqf']"
 const event_modal_location_label_selector = "div[jsname='TmcEkb'] div[class='rdgVoe'] div[class='x5FT4e kkUTBb']"
 const event_modal_location_focus_selector = "div[class~='BVTBSc'] div[class='drQEgd'] input"

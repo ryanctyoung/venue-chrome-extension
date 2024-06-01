@@ -4,7 +4,6 @@ let inputDiv = null
 
 function eventModalRender(modal) {
   const dropdowns = Array.from(modal.querySelectorAll(event_modal_location_selector))
-  inputDiv = modal.querySelector(event_modal_location_focus_selector)
 
   dropdowns.forEach((dropdown) => {
     let venueOptions = Array.from(dropdown.children[0].children).find((e) => e.className === "venue-location-dropdown") 
@@ -29,6 +28,8 @@ function eventModalRender(modal) {
       }
       button.onclick = buttonClick
       
+      inputDiv = modal.querySelector(event_modal_location_focus_selector)
+
       function optionClick(value) {
         if (inputDiv != null) {
           inputDiv.value = value
