@@ -5,10 +5,16 @@
   <body>
     <div class="popup-container">
       <label class="popup-header">Venue Calendar</label>
-      <label class="popup-input-label">Default Venues</label>
-      <span class="popup-subtitle">Separate venue names with commas, then click save</span>
-      <textarea id="popup-venue-input" rows="4" cols="40"></textarea>
-      <button id="save">Save</button>
+      <div class="popup-calendar-dropdown">
+        <select name="calendars" id="calendar-select">
+        </select>
+      </div>
+      <div>
+        <label class="popup-input-label">Default Venues</label>
+        <span class="popup-subtitle">Separate venue names with commas, then click save</span>
+        <textarea id="popup-venue-input" rows="4" cols="40"></textarea>
+        <button id="save">Save</button>
+      </div>
     </div>
   </body>
   <script type="text/javascript" src="../misc/jquery.3.7.1.min.js"></script>

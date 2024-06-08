@@ -2,5 +2,9 @@
 
 Next Items:
 - Multi-event creation with multiple locations
-    Also use the popup
+    Right click on existing event
+      Option to copy event to other venues. Each event item has a jslog property that contains the event id and the calendar id
 - Week view
+
+
+API key: AIzaSyA3P5mCPZpU4Y6jUjBvpgIybUc1CdCgcCI

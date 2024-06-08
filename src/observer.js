@@ -29,3 +29,25 @@ function addObserverIfDesiredNodeAvailable(selector, callBack) {
     }
   );
 }
+
+
+function waitForElm(selector, source = document.body) {
+  return new Promise(resolve => {
+      if (source.querySelector(selector)) {
+          return resolve(source.querySelector(selector));
+      }
+
+      const observer = new MutationObserver(mutations => {
+          if (source.querySelector(selector)) {
+              observer.disconnect();
+              resolve(source.querySelector(selector));
+          }
+      });
+
+      // If you get "parameter 1 is not of type 'Node'" error, see https://stackoverflow.com/a/77855838/492336
+      observer.observe(source, {
+          childList: true,
+          subtree: true
+      });
+  });
+}

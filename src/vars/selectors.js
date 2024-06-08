@@ -1,4 +1,6 @@
 const event_selector = "div[role=button][data-eventid]"
+const event_context_menu_selector = "div[class*='VfPpkd-xl07Ob-XxIAqe UQ5E0']"
+
 const observe_selector = "div[class=SGWAac]"
 const modal_overlay_selector = "div[class='yDmH0d']"
 const view_mode_selector = "[jsname='jnPWCc'] > span[jsname='V67aGc'][class='VfPpkd-vQzf8d']"

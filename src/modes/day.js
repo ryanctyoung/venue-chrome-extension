@@ -98,7 +98,7 @@ function dayModeRender() {
   })
 
   const venue_headers = {}
-  venue_labels = [...new Set(preset_venues.concat(events.map(e => e.venue).sort((a,b) => a < b ? (a === empty_venue_placeholder ? 1 : -1) : 1)))]
+  venue_labels = [...new Set(preset_venues.concat(empty_venue_placeholder))]
   if (venue_labels.length > 1 || !(venue_labels.includes(empty_venue_placeholder))) {
     venue_labels.map((label) => {
       const header = document.createElement('div')
@@ -149,7 +149,7 @@ function dayModeRender() {
 
       const createEventButton = document.querySelector(create_event_interact_selector)
       const optionClick = (e, venue, time) => {
-        const observer = new MutationObserver(mutations => {
+        const observer = new MutationObserver(async mutations => {
           const eventModal = document.querySelector(`${event_modal_selector}`)
           if (eventModal) {
             observer.disconnect()
@@ -157,7 +157,7 @@ function dayModeRender() {
 
             eventModal.querySelector(event_modal_time_preinput_selector).click()
             eventModal.querySelector(event_modal_time_input_selector).click()
-            const optionsContainer = eventModal.querySelector(event_modal_time_options_selector)
+            const optionsContainer = await waitForElm(event_modal_time_options_selector, eventModal)
             Array.from(optionsContainer.children).find(option => option.textContent === time)?.click()
 
             inputDiv.value = venue
@@ -226,34 +226,47 @@ function dayModeRender() {
 
 
   // form - {start, end, stack}
-  const overlapMapper = venue_labels.reduce((acc, curr) => (acc[curr] = [], acc) , {})
+  const columnMapper = venue_labels.reduce((acc, curr) => (acc[curr] = [], acc) , {})
 
   events.map(e => {
     const eventTimeStamp = e.element.querySelector(event_timestamp_selector)?.textContent ?? ""
-    e.element.style.zIndex = "4"
+    const venue = venue_labels.includes(e.venue) ? e.venue: empty_venue_placeholder
+    
     // form - {startTime, endTime}
     timeStamp = getEventTimes(eventTimeStamp)
-    if (overlapMapper[e.venue].length === 0) {
-      overlapMapper[e.venue].push(timeStamp)
+    if (columnMapper[venue].length === 0) {
+      columnMapper[venue].push(timeStamp)
     } else {
       
-      while(overlapMapper[e.venue].length > 0) {
-        const topLayer = overlapMapper[e.venue].slice(-1)
+      while(columnMapper[venue].length > 0) {
+        const topLayer = columnMapper[venue].slice(-1)
         if (timeStamp.startTime < topLayer.endTime) {
-          overlapMapper[e.venue].push(timeStamp)
+          columnMapper[venue].push(timeStamp)
           break
         } else {
-          overlapMapper[e.venue].pop()
+          columnMapper[venue].pop()
         }
       }
 
     }
 
-    const index = venue_labels.findIndex((label) => e.venue === label) ?? 0
+    const index = venue_labels.findIndex((label) => venue === label) ?? 0
     const finalSpacing = initialSpacing + (index*max_column_width)
 
-    e.element.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) - ((overlapMapper[e.venue].length-1)*overlap_spacing)), "important")
+    e.element.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin)), "important")
     e.element.style.setProperty("margin", `0 ${dec_to_px(column_margin)} 0 ${dec_to_px(column_margin)}`, "important")
-    e.element.style.setProperty("left", dec_to_px(finalSpacing + ((overlapMapper[e.venue].length-1)*overlap_spacing)), "important")
+    e.element.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venue].length-1)*overlap_spacing)), "important")
+    e.element.style.zIndex = "4"
+
+    // e.element.oncontextmenu = (event) => {
+    //   const jslog = event.currentTarget.getAttribute("jslog")
+    //   const [eventId, calendarId] = jslog.match(event_context_regex).slice(-2) // get last two elements
+    //   console.log(eventId, calendarId)
+    //   const contextMenu = waitForElm(event_context_menu_selector).then((menu) => {
+    //     console.log(menu)
+    //     return menu
+    //   })
+    // }
   })
 }
+

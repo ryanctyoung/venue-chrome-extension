@@ -31,6 +31,10 @@
       "runAt": "document_idle"
     }
   ],
+  "background": {
+    "service_worker": "background/index.js",
+    "type": "module"
+  },
   "web_accessible_resources": [{
     "resources": [
       "images/128.png",
@@ -38,11 +42,17 @@
     ],
     "matches": ["<all_urls>"]
   }],
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg9YuUNBTCOzie8qgOKLkEH5LsgxH68lABEcqn2IXTi2jIabopE5dgw70TVdpGnie5ouCKRbtCK1+Yk6i+GwtUUNgIVA2AXIgIIWHw0upUtz4GqovaqV6iZLLYe747KtQ8JvpP234ewMSwkkBqVJGldQFMg9u+CfycPGMyHKq6Pa1B9ojthlkq115aUKd8XIsJT9IWKNMQu/bssnqzUGAuCBj6WZrSr7ipIkLnR7eApUyw/waK98B1erwky8vF1phGyq/4pK/e9JjGYQZBNIqzYNP2gQHnDbKtlMFHHMe5C7ZKaPbNKpGhiBj2AzSbWBzXR6Xf/UbQ+xdRLbK5vqFRwIDAQAB",
+  "oauth2": {
+    "client_id": "483141259154-a8p01vr3bj98rdo9jcn2obo9rkheik6g.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/calendar"]
+  },
   "action": {
     "default_popup": "html/popup.html"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "identity"
   ],
   "host_permissions": [
     "https://calendar.google.com/calendar*"

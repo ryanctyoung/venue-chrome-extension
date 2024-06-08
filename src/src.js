@@ -21,9 +21,11 @@ const readSyncStorage = async (key) => {
   });
 };
 
+chrome.runtime.sendMessage({'message': 'getCalendarList'})
+
 chrome.storage.sync.get([preset_venue_sync_name]).then((result) => {
   console.log(result.default_venues)
-  if(result.default_venues.length === 1 && result.default_venues[0].trim().length === 0){
+  if( result.default_venues == undefined || (result.default_venues.length === 1 && result.default_venues[0].trim().length === 0)){
     return
   }
   preset_venues = result.default_venues
