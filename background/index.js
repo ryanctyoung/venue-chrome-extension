@@ -29,6 +29,7 @@
 
 
 */
+import secrets from '../secrets.json'
 
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
@@ -44,7 +45,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
         'contentType': 'json'
       };
 
-      fetch('https://www.googleapis.com/calendar/v3/users/me/calendarList?key=AIzaSyA3P5mCPZpU4Y6jUjBvpgIybUc1CdCgcCI', parameters)
+      fetch(`https://www.googleapis.com/calendar/v3/users/me/calendarList?key=${secrets.API_key}`, parameters)
         .then((res) => res.json())
         .then((data => {
           const pick = (obj, arr) =>
