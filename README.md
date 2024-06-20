@@ -7,4 +7,3 @@ Next Items:
 - Week view
 
 
-API key: AIzaSyA3P5mCPZpU4Y6jUjBvpgIybUc1CdCgcCI
