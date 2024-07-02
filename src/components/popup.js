@@ -1,4 +1,7 @@
 //onReady load function
+// 
+
+var secrets = fetch(chrome.runtime.getURL('/secrets.json')).then(res => res.json())
 
 const setDefaultVenues = async (labels) => {
   await chrome.storage.sync.set({default_venues: labels})
@@ -10,7 +13,6 @@ const regex = /(?<=\*Venue sites\*: ).*(?= \*e\*)/
 $(function () {
   chrome.storage.onChanged.addListener(async (changes) => {
     try {
-
       if ("selectedCalendarId" in changes) {
         const id = changes.selectedCalendarId.newValue
         if (id == undefined || id === -1) {
@@ -24,7 +26,7 @@ $(function () {
         $("#popup-venue-input").val(labelArray.join(', '))
       }
     } catch (err) {
-
+      console.error(err)
     }
   })
 
@@ -37,10 +39,10 @@ $(function () {
         if (select === null) {
           return
         }
-        select.addEventListener('change', function (e) {
+        select.onchange = function (e) {
           const value = e.target.value 
           chrome.storage.sync.set({selectedCalendarId: value})
-         });
+         }
     
         calendars.map((c) => {
           const option = document.createElement("option")
@@ -63,11 +65,10 @@ $(function () {
           $("#popup-venue-input").val(default_venues.join(', '))
         })
       } catch (err) {
-  
+        console.error(err)
       }
     })
   }
-
   updatePopup();
 })
 
@@ -85,7 +86,7 @@ $("#save").click(function() {
   // overwrite settings in calendar description
   const id_Promise = chrome.storage.sync.get(["selectedCalendarId"])
   const calendar_Promise = chrome.storage.sync.get(["calendars"])
-  Promise.all([id_Promise, calendar_Promise]).then(([id, cal]) => {
+  Promise.all([id_Promise, calendar_Promise]).then(async ([id, cal]) => {
      id = id.selectedCalendarId
      const calendar = cal.calendars.find(c => c.id === id)
       // find the cursor position where the venue settings are. if they do not exist, append it to the end of the description
@@ -94,7 +95,6 @@ $("#save").click(function() {
         calendar.description = settings
       } else {
         const cursor_match = calendar.description.match(regex)
-        console.log(cursor_match)
         if (cursor_match == null) {
           calendar.description += settings
         } else {
@@ -102,8 +102,8 @@ $("#save").click(function() {
         }
 
       }
-      console.log(cal)
-      chrome.identity.getAuthToken({interactive: true}, (token) => {
+      await chrome.storage.sync.set({calendars: cal.calendars})
+      chrome.identity.getAuthToken({interactive: true}, async(token) => {
       let parameters = {
         method: 'PUT',
         async: true,
@@ -115,10 +115,13 @@ $("#save").click(function() {
         })
       };
 
-      fetch(`https://www.googleapis.com/calendar/v3/calendars/${id}?key=AIzaSyA3P5mCPZpU4Y6jUjBvpgIybUc1CdCgcCI`, parameters)
+      secrets = await secrets
+
+      fetch(`https://www.googleapis.com/calendar/v3/calendars/${id}?key=${secrets.API_key}`, parameters)
         .then((res) => {
           console.log(res.json())
         })
+        // updatePopup()
         .catch((err) => console.error(err));
     })
   })

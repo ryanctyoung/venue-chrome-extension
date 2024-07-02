@@ -1,8 +1,14 @@
 const event_selector = "div[role=button][data-eventid]"
 const event_context_menu_selector = "div[class*='VfPpkd-xl07Ob-XxIAqe UQ5E0']"
 
+const calendar_settings_selector = "div[class='DmDTHe']"
+
 const observe_selector = "div[class=SGWAac]"
 const modal_overlay_selector = "div[class='yDmH0d']"
+const event_edit_selector = "div[id='YPCqFe']"
+
+
+
 const view_mode_selector = "[jsname='jnPWCc'] > span[jsname='V67aGc'][class='VfPpkd-vQzf8d']"
 const column_header_selector = "div[class='Ifvtsc']"
 const initial_spacing_selector = "div[class='fimTmc']"
@@ -20,12 +26,14 @@ const event_modal_time_preinput_selector = "div[class='Shmoqf xI9Bs jzox1'] butt
 const event_modal_time_input_selector = "div[class='JHD0Fd'] input"
 const event_modal_time_options_selector = "div[class='w8UdJc']"
 
-const event_modal_location_selector = "div[jsname='TmcEkb'] div[class='Shmoqf']"
-const event_modal_location_label_selector = "div[jsname='TmcEkb'] div[class='rdgVoe'] div[class='x5FT4e kkUTBb']"
-const event_modal_location_focus_selector = "div[class~='BVTBSc'] div[class='drQEgd'] input"
-const event_modal_location_input_selector = "div[class='YwLf7b XsN7kf']"
+const event_edit_modal_location_subselector = "div[class='ewPPR'] div[class='FrSOzf']:nth-child(2)"
+const event_modal_location_selector = `div[jsname='TmcEkb'] div[class='Shmoqf'], ${event_edit_modal_location_subselector}`
+const event_modal_location_label_selector = `div[jsname='TmcEkb'] div[class='rdgVoe'] div[class='x5FT4e kkUTBb'], ${event_edit_modal_location_subselector} div[class='tzcF6']`
+const event_modal_location_focus_selector = `div[class~='BVTBSc'] div[class='drQEgd'] input, ${event_edit_modal_location_subselector} input`
+//VfPpkd-fmcmS-wGMbrd edit input selector
+// const event_modal_location_input_selector = `div[class='YwLf7b XsN7kf'], ${event_edit_modal_location_subselector} input`
 
-// event edit page: class='FrSOzf'
+const event_edit_page_selector = "div[class='p9lUpf']"
 
 const headerClassName = "venueHeader"
 const preset_venue_sync_name = "default_venues"

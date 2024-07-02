@@ -1,3 +1,11 @@
+var single_time_regex, venue_regex, timestamp_regex
+
+(async () => {
+  const src = chrome.runtime.getURL("src/vars/regex.js");
+  ({single_time_regex, venue_regex, timestamp_regex} = await import(src));
+
+})();
+
 const timeSlots = []
 Array(24).keys().forEach(hour => {
   if (hour < 9) {
