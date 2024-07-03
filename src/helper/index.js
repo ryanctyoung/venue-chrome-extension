@@ -11,5 +11,5 @@ function dec_to_px(x) {
 }
 
 function px_to_dec(x) {
-  return x.match(px_regex)
+  return x.match(px_regex)[0]
 }

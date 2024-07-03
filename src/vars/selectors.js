@@ -1,4 +1,5 @@
 const event_selector = "div[role=button][data-eventid]"
+// const event_selector = "div[role=button][class*='GTG3wb ChfiMc rFUW1c ']"
 const event_context_menu_selector = "div[class*='VfPpkd-xl07Ob-XxIAqe UQ5E0']"
 
 const calendar_settings_selector = "div[class='DmDTHe']"
@@ -20,8 +21,12 @@ const day_column_selector = "h2[class='hI2jVc']"
 const create_button = "div[class='JAPqpe K0NPx']"
 const create_event_interact_selector = "div[class~='XsRa1c']" // there is a trailing whitespace in the full class name
 
-const event_modal_selector = "div[jsname='ssXDle']"
+const day_view_event_board = "div[class='feMFof A3o4Oe']"
+const day_view_multi_event_container = "div[class='venue-multi-event-container']"
 
+const event_item_title = "span[class='I0UMhf']"
+
+const event_modal_selector = "div[jsname='ssXDle']"
 const event_modal_time_preinput_selector = "div[class='Shmoqf xI9Bs jzox1'] button"
 const event_modal_time_input_selector = "div[class='JHD0Fd'] input"
 const event_modal_time_options_selector = "div[class='w8UdJc']"
@@ -32,6 +37,7 @@ const event_modal_location_label_selector = `div[jsname='TmcEkb'] div[class='rdg
 const event_modal_location_focus_selector = `div[class~='BVTBSc'] div[class='drQEgd'] input, ${event_edit_modal_location_subselector} input`
 //VfPpkd-fmcmS-wGMbrd edit input selector
 // const event_modal_location_input_selector = `div[class='YwLf7b XsN7kf'], ${event_edit_modal_location_subselector} input`
+
 
 const event_edit_page_selector = "div[class='p9lUpf']"
 

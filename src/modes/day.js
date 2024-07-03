@@ -84,7 +84,7 @@ function dayModeRender() {
   const flexbox = document.createElement('div')
   flexbox.style.setProperty('display', 'flex')
   flexbox.style.setProperty('flex-direction', 'row')
-  // flexbox.style.setProperty('overflow', 'scroll')
+  flexbox.style.setProperty('overflow', 'scroll')
   flexbox.style.setProperty('width', 'fit-content')
   const columnHeader = document.querySelector("div[class=Ifvtsc]")
   const eventGrid = document.querySelector(event_grid_selector)
@@ -96,12 +96,16 @@ function dayModeRender() {
   columnHeader?.style.setProperty("word-wrap", "break-word")
   columnHeader?.replaceChildren(flexbox)
 
-  // form - {element: HTMLElement, venue: string, timestamp: string}
+  // query for event Elements - {element: HTMLElement, venue: string, timestamp: string}
   const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
+
+    let eventVenue = event.outerText.match(venue_regex)
+    console.log(event.querySelector(event_item_title).outerText)
     return {
       element: event,
-      venue: event.outerText.match(venue_regex)? event.outerText.match(venue_regex)[0] : empty_venue_placeholder,
-      timestamp: event.outerText.match(timestamp_regex)?  event.outerText.match(timestamp_regex)[0] : ''
+      venue: eventVenue? eventVenue[0] : empty_venue_placeholder,
+      timestamp: event.outerText.match(timestamp_regex)?  event.outerText.match(timestamp_regex)[0] : '',
+      title: event.querySelector(event_item_title).outerText
     }
   })
 
@@ -235,46 +239,86 @@ function dayModeRender() {
 
   // form - {start, end, stack}
   const columnMapper = venue_labels.reduce((acc, curr) => (acc[curr] = [], acc) , {})
+  
+  let multi_event_container = document.querySelector(day_view_multi_event_container)
+  if (multi_event_container === null) {
+    multi_event_container = document.createElement("div")
+    multi_event_container.setAttribute("class", "venue-multi-event-container")
+    document.querySelector(day_view_event_board)?.appendChild(multi_event_container)
+  }
+  multi_event_container.replaceChildren()
 
   events.map(e => {
     const eventTimeStamp = e.element.querySelector(event_timestamp_selector)?.textContent ?? ""
-    const venue = venue_labels.includes(e.venue) ? e.venue: empty_venue_placeholder
-    
     // form - {startTime, endTime}
     timeStamp = getEventTimes(eventTimeStamp)
-    if (columnMapper[venue].length === 0) {
-      columnMapper[venue].push(timeStamp)
-    } else {
-      
-      while(columnMapper[venue].length > 0) {
-        const topLayer = columnMapper[venue].slice(-1)
-        if (timeStamp.startTime < topLayer.endTime) {
-          columnMapper[venue].push(timeStamp)
-          break
-        } else {
-          columnMapper[venue].pop()
+
+    const venues = e.venue.split(";").map(v => {
+      v = v.trim()
+      const result = venue_labels.includes(v) ? v: empty_venue_placeholder
+      if (columnMapper[result].length === 0) {
+        columnMapper[result].push(timeStamp)
+      } else {
+        
+        while(columnMapper[result].length > 0) {
+          const topLayer = columnMapper[result].slice(-1)
+          if (timeStamp.startTime < topLayer.endTime) {
+            columnMapper[result].push(timeStamp)
+            break
+          } else {
+            columnMapper[result].pop()
+          }
         }
+  
+      }
+      return result
+    })
+
+    // loop here
+    for(let i = 0; i < venues.length ; i++) {
+      const index = venue_labels.findIndex((label) => venues[i] === label) ?? 0
+      const finalSpacing = initialSpacing + (index*max_column_width)
+
+
+      let htmlBox = null
+      if (i === 0) {
+        htmlBox = e.element
+      } else {
+        htmlBox = document.createElement("div")
+        const title = document.createElement("div")
+        title.textContent = `${e.title}`
+        const subtitle = document.createElement("div")
+        subtitle.textContent = `${e.timestamp} | ${venues[i]}`
+
+        htmlBox.style.setProperty("top", e.element.style.top)
+        htmlBox.style.setProperty("padding", dec_to_px(multi_event_padding))
+        htmlBox.style.setProperty("height", dec_to_px(px_to_dec(e.element.style.height) - (2 * multi_event_border_size) - (2 * multi_event_padding)))
+        htmlBox.style.opacity = multi_event_opacity
+        htmlBox.style.backgroundColor = e.element.style.backgroundColor
+        htmlBox.style.border = `${dec_to_px(multi_event_border_size)} solid black`
+        htmlBox.style.borderRadius = `${dec_to_px(multi_event_border_radius)}`
+        htmlBox.style.fontSize = `${dec_to_px(multi_event_fontSize)}`
+        subtitle.style.fontSize = `${dec_to_px(multi_event_subtitle_fontSize)}`
+        htmlBox.style.color = `${multi_event_fontColor}`
+        htmlBox.style.cursor = multi_event_pointer
+        htmlBox.style.setProperty("position", multi_event_position_style)
+
+        htmlBox.onclick = (clickevent) => {
+          clickevent.stopPropagation()
+          e.element.click()
+        }
+        // htmlBox.setAttribute("data-eventchip", true)
+        // htmlBox.setAttribute("data-eventid", e.element.getAttribute("data-eventid"))
+
+        htmlBox.append(title, subtitle)
+        multi_event_container.appendChild(htmlBox)
       }
 
+      htmlBox.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) - (2 * multi_event_padding)), "important")
+      htmlBox.style.setProperty("margin", `0 ${dec_to_px(column_margin)} 0 ${dec_to_px(column_margin)}`, "important")
+      htmlBox.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venues[i]].length-1)*overlap_spacing)), "important")
+      htmlBox.style.zIndex = "4"
     }
-
-    const index = venue_labels.findIndex((label) => venue === label) ?? 0
-    const finalSpacing = initialSpacing + (index*max_column_width)
-
-    e.element.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin)), "important")
-    e.element.style.setProperty("margin", `0 ${dec_to_px(column_margin)} 0 ${dec_to_px(column_margin)}`, "important")
-    e.element.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venue].length-1)*overlap_spacing)), "important")
-    e.element.style.zIndex = "4"
-
-    // e.element.oncontextmenu = (event) => {
-    //   const jslog = event.currentTarget.getAttribute("jslog")
-    //   const [eventId, calendarId] = jslog.match(event_context_regex).slice(-2) // get last two elements
-    //   console.log(eventId, calendarId)
-    //   const contextMenu = waitForElm(event_context_menu_selector).then((menu) => {
-    //     console.log(menu)
-    //     return menu
-    //   })
-    // }
   })
 }
 
