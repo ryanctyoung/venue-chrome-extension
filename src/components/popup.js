@@ -3,9 +3,17 @@
 
 var secrets = fetch(chrome.runtime.getURL('/secrets.json')).then(res => res.json())
 
+const setFormValues = async (form) => {
+  let obj = Object.fromEntries(form)
+  obj.venue_enable = obj.venue_enable === "on" ? true : false
+  obj.venue_default_venues = obj.venue_default_venues.trim().split(',').map(s => s.trim())
+  await chrome.storage.sync.set(obj)
+
+}
+
 const setDefaultVenues = async (labels) => {
   await chrome.storage.sync.set({default_venues: labels})
-        console.log("Default venues saved")
+  console.log("Default venues saved")
 }
 
 const regex = /(?<=\*Venue sites\*: ).*(?= \*e\*)/
@@ -23,7 +31,7 @@ $(function () {
         const description = calendars.find((c) => c.id === id)?.description
         const labelArray = ((description?.match(regex) ?? [null])[0] ?? "").split(", ")
         setDefaultVenues(labelArray)
-        $("#popup-venue-input").val(labelArray.join(', '))
+        $("#venue_default_venues").val(labelArray.join(', '))
       }
     } catch (err) {
       console.error(err)
@@ -60,9 +68,15 @@ $(function () {
           select.value = id
         })
         
-        chrome.storage.sync.get(["default_venues"]).then((res) => {
-          const { default_venues } = res
-          $("#popup-venue-input").val(default_venues.join(', '))
+        chrome.storage.sync.get(["venue_default_venues"]).then((res) => {
+          const default_venues = res.venue_default_venues
+          $("#venue_default_venues").val(default_venues.join(', '))
+        })
+
+        chrome.storage.sync.get(["venue_enable"]).then((res) => {
+          const { venue_enable } = res
+          const checkbox = document.querySelector("#venue_enable")
+          venue_enable ? checkbox.setAttribute("checked", true) : checkbox.removeAttribute("checked")
         })
       } catch (err) {
         console.error(err)
@@ -73,16 +87,16 @@ $(function () {
 })
 
 
+// Here is the popup submission function. Handles updating the calendar description and the enable/disable setting for the extension as a whole
 
-$("#save").click(function() {
-  const labelInput = $("#popup-venue-input").val()
+document.querySelector("#venue-popup-form").onsubmit = function(e) {
+  e.preventDefault()
+  const form =  new FormData(document.getElementById("venue-popup-form"))
 
-  if (labelInput === undefined) {
-    return
-  }
+  setFormValues(form)
 
-  labelArray = labelInput.trim().split(',').map(s => s.trim())
-  setDefaultVenues(labelArray)
+  const labelInput = $("#venue_default_venues").val()
+
   // overwrite settings in calendar description
   const id_Promise = chrome.storage.sync.get(["selectedCalendarId"])
   const calendar_Promise = chrome.storage.sync.get(["calendars"])
@@ -118,11 +132,10 @@ $("#save").click(function() {
       secrets = await secrets
 
       fetch(`https://www.googleapis.com/calendar/v3/calendars/${id}?key=${secrets.API_key}`, parameters)
-        .then((res) => {
-          console.log(res.json())
+        .then(() => {
+          window.close()
         })
-        // updatePopup()
         .catch((err) => console.error(err));
     })
   })
-})
+}

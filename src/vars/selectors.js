@@ -24,12 +24,15 @@ const create_event_interact_selector = "div[class~='XsRa1c']" // there is a trai
 const day_view_event_board = "div[class='feMFof A3o4Oe']"
 const day_view_multi_event_container = "div[class='venue-multi-event-container']"
 
+
 const event_item_title = "span[class='I0UMhf']"
 
 const event_modal_selector = "div[jsname='ssXDle']"
 const event_modal_time_preinput_selector = "div[class='Shmoqf xI9Bs jzox1'] button"
 const event_modal_time_input_selector = "div[class='JHD0Fd'] input"
 const event_modal_time_options_selector = "div[class='w8UdJc']"
+const event_details_selector = "div[class='Jcb6qd']"
+
 
 const event_edit_modal_location_subselector = "div[class='ewPPR'] div[class='FrSOzf']:nth-child(2)"
 const event_modal_location_selector = `div[jsname='TmcEkb'] div[class='Shmoqf'], ${event_edit_modal_location_subselector}`
@@ -42,5 +45,14 @@ const event_modal_location_focus_selector = `div[class~='BVTBSc'] div[class='drQ
 const event_edit_page_selector = "div[class='p9lUpf']"
 
 const headerClassName = "venueHeader"
-const preset_venue_sync_name = "default_venues"
+const enabled_sync_name = "venue_enable"
+const preset_venue_sync_name = "venue_default_venues"
 const empty_venue_placeholder = 'Other'
+
+const week_view_day_header_selector = "h2[class='hI2jVc']"
+const week_view_event_location_selector = "span[class='k7JKz'] , div[class*='lhydbb K9QN7e  EiZ8Dd']"
+const week_view_day_gridcell_selector = "[role='gridcell'][class~='BiKU4b']"
+const week_view_event_board_selector = "div[class='mDPmMe']"
+const week_view_event_title_selector = "span[class='I0UMhf']"
+const week_view_event_timestamp_selector = "span[class='b0NTye'], div[class='lhydbb gVNoLb  EiZ8Dd TuM9nf']"
+const week_view_multi_event_container_selector = "div[class='venue-multi-event-container']"

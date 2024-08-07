@@ -112,3 +112,44 @@
 .venue-timeslot-content.show{
   display: block;
 }
+
+.venue-day-header {
+
+  .tool-tip {
+    position: absolute;
+    z-index: 40;
+    width: 35px;
+    font-size: small;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    visibility: hidden;
+    margin-left: -10px;
+    margin-top: -25px;
+  }
+
+}
+
+.venue-day-header:hover .tool-tip {
+  visibility: visible;
+}
+
+
+.venue-event-tooltip {
+  position: absolute;
+  z-index: 40;
+  min-width: 60px;
+  width: fit-content;
+  font-size: small;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  visibility: hidden;
+  margin-left: -10px;
+  margin-top: -25px;
+  opacity: .75;
+}

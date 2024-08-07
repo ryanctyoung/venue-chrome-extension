@@ -19,8 +19,9 @@
     color: grey;
   }
 
-  #popup-venue-input {
+  #venue_default_venues {
     resize: none;
+    width: -webkit-fill-available;
   }
 
   button#save {

@@ -17,3 +17,12 @@ const font_size = 15
 const minutes_in_hour = 60
 const minutes_in_half_day = 12 * minutes_in_hour
 const minutes_in_day = minutes_in_half_day * 2
+
+const day_header_container_classname = "venue-day-headers-container"
+const day_header_classname = "venue-day-header"
+const day_header_tooltip_classname = "tool-tip"
+const day_view_event_detail_visibility = "visible"
+
+const week_view_day_header_column_margins = 2
+const week_view_event_detail_visibility = "hidden"
+const week_view_event_tooltip_classname = "venue-event-tooltip"

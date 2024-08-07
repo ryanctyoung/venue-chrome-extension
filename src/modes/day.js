@@ -100,7 +100,6 @@ function dayModeRender() {
   const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
 
     let eventVenue = event.outerText.match(venue_regex)
-    console.log(event.querySelector(event_item_title).outerText)
     return {
       element: event,
       venue: eventVenue? eventVenue[0] : empty_venue_placeholder,
@@ -274,7 +273,7 @@ function dayModeRender() {
       return result
     })
 
-    // loop here
+    // loop here through venues
     for(let i = 0; i < venues.length ; i++) {
       const index = venue_labels.findIndex((label) => venues[i] === label) ?? 0
       const finalSpacing = initialSpacing + (index*max_column_width)
@@ -314,6 +313,7 @@ function dayModeRender() {
         multi_event_container.appendChild(htmlBox)
       }
 
+      htmlBox.querySelector(event_details_selector)?.style.setProperty("visibility", day_view_event_detail_visibility)
       htmlBox.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) - (2 * multi_event_padding)), "important")
       htmlBox.style.setProperty("margin", `0 ${dec_to_px(column_margin)} 0 ${dec_to_px(column_margin)}`, "important")
       htmlBox.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venues[i]].length-1)*overlap_spacing)), "important")

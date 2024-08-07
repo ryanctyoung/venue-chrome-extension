@@ -1,5 +1,5 @@
 let preset_venues = []
-
+let extension_enabled = true
 
 const readSyncStorage = async (key) => {
   return new Promise((resolve, reject) => {
@@ -15,15 +15,20 @@ const readSyncStorage = async (key) => {
 
 chrome.runtime.sendMessage({'message': 'getCalendarList'})
 
-chrome.storage.sync.get([preset_venue_sync_name]).then((result) => {
-  console.log(result.default_venues)
-  if( result.default_venues == undefined || (result.default_venues.length === 1 && result.default_venues[0].trim().length === 0)){
+chrome.storage.sync.get([preset_venue_sync_name, enabled_sync_name]).then((result) => {
+  console.log(result[preset_venue_sync_name])
+  if( result[preset_venue_sync_name] == undefined || (result[preset_venue_sync_name].length === 1 && result[preset_venue_sync_name][0].trim().length === 0)){
     return
   }
-  preset_venues = result.default_venues
+  preset_venues = result[preset_venue_sync_name]
+  extension_enabled = result[enabled_sync_name] ?? true
 })
 
 function collectEventsCallback(mutationList) {
+  if (!extension_enabled) {
+    return
+  }
+  
   viewModeElement = document.querySelector(view_mode_selector)
 
   // const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});

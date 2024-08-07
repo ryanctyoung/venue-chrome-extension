@@ -9,12 +9,14 @@
         <select name="calendars" id="calendar-select">
         </select>
       </div>
-      <div>
-        <label class="popup-input-label">Default Venues</label>
-        <span class="popup-subtitle">Separate venue names with commas, then click save</span>
-        <textarea id="popup-venue-input" rows="4" cols="40"></textarea>
-        <button id="save">Save</button>
-      </div>
+      <form id="venue-popup-form">
+        <label for="venue_default_venues" class="popup-input-label">Default Venues</label>
+          <span class="popup-subtitle">Separate venue names with commas, then click save</span><br>
+          <textarea id="venue_default_venues" name="venue_default_venues" rows="4"></textarea><br>
+        <label for="venue_enable" class="popup-input-label">Extension Enabled?</label>
+          <input id="venue_enable" name="venue_enable" type="checkbox"/> <br>
+        <button name="submit" id="save">Save</button>
+      </form>
     </div>
   </body>
   <script type="text/javascript" src="../misc/jquery.3.7.1.min.js"></script>
