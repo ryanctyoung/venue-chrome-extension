@@ -13,10 +13,9 @@ const setFormValues = async (form) => {
 
 const setDefaultVenues = async (labels) => {
   await chrome.storage.sync.set({default_venues: labels})
-  console.log("Default venues saved")
 }
 
-const regex = /(?<=\*Venue sites\*: ).*(?= \*e\*)/
+const regex = /(?<=\*Venue sites\*: )[\S\s]*(?= \*e\*)/
  
 $(function () {
   chrome.storage.onChanged.addListener(async (changes) => {
@@ -43,6 +42,8 @@ $(function () {
     chrome.storage.sync.get(["calendars"]).then((response) => {
       try {
         const { calendars } = response
+
+        // # Calendar Select Dropdown
         const select = document.querySelector("select[id='calendar-select']")
         if (select === null) {
           return
@@ -68,6 +69,7 @@ $(function () {
           select.value = id
         })
         
+        // # Calendar Text Area
         chrome.storage.sync.get(["venue_default_venues"]).then((res) => {
           const default_venues = res.venue_default_venues
           $("#venue_default_venues").val(default_venues.join(', '))
@@ -95,7 +97,7 @@ document.querySelector("#venue-popup-form").onsubmit = function(e) {
 
   setFormValues(form)
 
-  const labelInput = $("#venue_default_venues").val()
+  const labelInput = $("#venue_default_venues").val().split(',').map(x => x.trim()).join(',')
 
   // overwrite settings in calendar description
   const id_Promise = chrome.storage.sync.get(["selectedCalendarId"])
@@ -111,8 +113,10 @@ document.querySelector("#venue-popup-form").onsubmit = function(e) {
         const cursor_match = calendar.description.match(regex)
         if (cursor_match == null) {
           calendar.description += settings
+          console.log('New venue settings established')
         } else {
           calendar.description = calendar.description.replace(regex, labelInput)
+          console.log('Venue settings updated')
         }
 
       }

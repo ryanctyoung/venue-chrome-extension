@@ -10,7 +10,7 @@ const event_edit_selector = "div[id='YPCqFe']"
 
 
 
-const view_mode_selector = "[jsname='jnPWCc'] > span[jsname='V67aGc'][class='VfPpkd-vQzf8d']"
+const view_mode_selector = "[jsname='jnPWCc'] > span[jsname='V67aGc'][class='AeBiU-vQzf8d']"
 const column_header_selector = "div[class='Ifvtsc']"
 const initial_spacing_selector = "div[class='fimTmc']"
 const event_grid_selector = "div[class='Tmdkcc elYzab-cXXICe-Hjleke']"

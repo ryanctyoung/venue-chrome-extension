@@ -6,7 +6,11 @@ var single_time_regex, venue_regex, timestamp_regex
 
 })();
 
+// const columnMargins = week_view_day_header_column_margins // px
+
+
 const timeSlots = []
+const busyTimes = {}
 Array(24).keys().forEach(hour => {
   if (hour < 9) {
     return
@@ -136,7 +140,12 @@ function dayModeRender() {
       optionsDiv.className = "venue-timeslot-content"
       optionsDiv.style.width = dec_to_px(max_column_width - (columnMargins*2))
 
-      const busyTimes = []
+      if (!(label in busyTimes)) {
+        busyTimes[label] = []
+        
+      }
+      const currReservations = busyTimes[label]
+
 
       events.filter(e => e.venue === label).map(e => {
         if (e.timestamp.match(timestamp_regex) === null) {
@@ -145,15 +154,15 @@ function dayModeRender() {
 
         const [start, end] = ((ts) => ts.split(' to '))(e.timestamp)
 
-        if (busyTimes.length === 0) {
-          busyTimes.push({start, end})
+        if (currReservations.length === 0) {
+          currReservations.push({start, end})
           return
         }
 
-        if (compareTimes(busyTimes[busyTimes.length - 1].end, start)) {
-          busyTimes.push({start,end})
-        } else if (compareTimes(busyTimes[busyTimes.length - 1].end, end)) {
-          busyTimes[busyTimes.length - 1].end = end
+        if (compareTimes(currReservations[currReservations.length - 1].end, start)) {
+          currReservations.push({start,end})
+        } else if (compareTimes(currReservations[currReservations.length - 1].end, end)) {
+          currReservations[currReservations.length - 1].end = end
         }
         
       })
@@ -188,9 +197,9 @@ function dayModeRender() {
       let i = 0
       timeSlots.map((t) => {
         let disabled = false
-        if (busyTimes.length > 0 && i < busyTimes.length) {
-          if (compareTimes(busyTimes[i].start, t)) {
-            if (compareTimes(busyTimes[i].end, t)) {
+        if (currReservations.length > 0 && i < currReservations.length) {
+          if (compareTimes(currReservations[i].start, t)) {
+            if (compareTimes(currReservations[i].end, t)) {
               i++
             } else {
               disabled = true
@@ -320,5 +329,6 @@ function dayModeRender() {
       htmlBox.style.zIndex = "4"
     }
   })
+  console.log(busyTimes)
 }
 

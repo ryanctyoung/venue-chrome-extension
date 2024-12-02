@@ -1,7 +1,6 @@
 function addObserverIfDesiredNodeAvailable(selector, callBack) {
   function postObserverCallbacks(mutationList, observer) {
     observer.disconnect();
-    // if mutation involves day change, perform event transition animation on the existing events in the redux store.
     callBack(mutationList);
     observer.observe(document.querySelector(selector),
       {

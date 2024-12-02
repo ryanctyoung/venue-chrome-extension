@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Venue Calendar",
-  "version": "1.027",
+  "version": "1.300.1",
   "description": "Implements column view based on location in Google Calendar.",
   "content_scripts": [
     {
@@ -20,6 +20,7 @@
 
         "src/modes/day.js",
         "src/modes/week.js",
+        "src/modes/month.js",
         "src/modes/event_modal.js",
         
         "src/src.js"

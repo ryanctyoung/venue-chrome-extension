@@ -31,23 +31,20 @@ function collectEventsCallback(mutationList) {
   
   viewModeElement = document.querySelector(view_mode_selector)
 
-  // const [tab] = await chrome.tabs.query({active: true, lastFocusedWindow: true});
+  if(viewModeElement === null) {
+    return
+  }
 
-  // getLocalizedString('day')
-  // get calendar mode by reading the dropdown instead: <span jsname="V67aGc"> Day </span>
   if (viewModeElement.textContent === 'Day') {
     dayModeRender()
   }
   else if (viewModeElement.textContent === 'Week') {
     weekModeRender()
   }
+  // else if (viewModeElement.textContent === 'Month') {
+  //   monthModeRender()
+  // }
 }
-
-// settings button 
-const venue_settings_button = document.createElement('div')
-venue_settings_button.className = 'venue_settings_button'
-const headerSettings = document.querySelector(calendar_settings_selector)
-headerSettings.insertBefore(venue_settings_button, headerSettings.firstChild);
 
 function eventModalCallback(mutationList) {
   const eventModal = document.querySelector(event_modal_selector)
@@ -69,12 +66,15 @@ function eventEditListener(request, sender, sendResponse) {
   }
 }
 
+//from observer.js
+  addObserverIfDesiredNodeAvailable(observe_selector, collectEventsCallback);
+  addObserverIfDesiredNodeAvailable(modal_overlay_selector, eventModalCallback);
+
 
 console.log('Initializing Calendar Venue...')
 
-//from observer.js
-addObserverIfDesiredNodeAvailable(observe_selector, collectEventsCallback);
-addObserverIfDesiredNodeAvailable(modal_overlay_selector, eventModalCallback);
+
+
 // addObserverIfDesiredNodeAvailable(event_edit_selector, eventEditCallback);
 
 chrome.runtime.onMessage.addListener(eventEditListener)

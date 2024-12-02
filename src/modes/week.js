@@ -12,7 +12,7 @@ function weekModeRender() {
     let columnContainer = day.querySelector(`div[class=${day_header_container_classname}]`)
     if (columnContainer === null) {
       columnContainer = document.createElement("div")
-      day.appendChild(columnContainer)
+      day?.appendChild(columnContainer)
 
       columnContainer.className = day_header_container_classname
       columnContainer.style.setProperty('display', 'flex')
@@ -30,15 +30,15 @@ function weekModeRender() {
         columnDiv.style.setProperty('background-color', 'blue')
         columnDiv.style.setProperty('border-radius', '3px')
         columnDiv.style.setProperty('margin', `0px ${columnMargins}px 0px ${columnMargins}px`)
-        columnContainer.appendChild(columnDiv)
+        columnContainer?.appendChild(columnDiv)
   
         // apply on hover tooltip
         const toolTipDiv = document.createElement("div")
         toolTipDiv.className = day_header_tooltip_classname
         toolTipDiv.textContent = venueName
-        columnDiv.appendChild(toolTipDiv)
+        columnDiv?.appendChild(toolTipDiv)
       }
-      day.appendChild(columnContainer)
+      day?.appendChild(columnContainer)
     }
     columnWidth = (columnContainer.getBoundingClientRect().width / numberOfColumns) - (2 *columnMargins)
 
@@ -54,7 +54,7 @@ function weekModeRender() {
       const index = day.getAttribute("data-column-index")
       multi_event_container.setAttribute("class", "venue-multi-event-container")
       multi_event_container.setAttribute("venue-index", index)
-      day.querySelector("[role='presentation']").appendChild(multi_event_container)
+      day.querySelector("[role='presentation']")?.appendChild(multi_event_container)
 
     }
     multi_event_container.replaceChildren()
@@ -85,9 +85,6 @@ function weekModeRender() {
       const result = preset_venues.includes(v) ? v: empty_venue_placeholder
       return result
     })
-
-    console.log(`Venue logs for event ${title}:`)
-    console.log(venues)
 
     for(let i = 0; i < venues.length ; i++) {
       const index = preset_venues.findIndex((label) => venues[i] === label) ?? 0
@@ -124,15 +121,15 @@ function weekModeRender() {
         }
 
         // htmlBox.append(titleDiv, subtitleDiv)
-        multi_event_container.appendChild(htmlBox)
+        multi_event_container?.appendChild(htmlBox)
       }
 
       // add tooltip with Title, Location, Timestamp
       const toolTipDiv = document.createElement("div")
       toolTipDiv.className = week_view_event_tooltip_classname
-      toolTipDiv.textContent = title
+      toolTipDiv.textContent = `${title} @ ${location}`
       const defaultBorder = i === 0 ? 'none' : `${dec_to_px(multi_event_border_size)} dotted black`
-      htmlBox.appendChild(toolTipDiv)
+      htmlBox?.appendChild(toolTipDiv)
       htmlBox.onmouseover = () => {
         htmlBox.style.border = `${dec_to_px(multi_event_border_size)} double black`
         toolTipDiv.style.visibility = 'visible'
