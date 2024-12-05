@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       )
         .catch((err) => console.error(err));
     })
-  }
+  } 
 });
 
 function sendEventEditMessage(url, tabId) {

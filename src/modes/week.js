@@ -152,4 +152,5 @@ function weekModeRender() {
     }
   }
   Array.from(document.querySelectorAll(event_selector)).map(createMultiEvents)
+  chrome.storage.sync.set({[current_event_list_sync_name]: []})
 }

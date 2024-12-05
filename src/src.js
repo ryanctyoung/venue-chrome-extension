@@ -16,7 +16,6 @@ const readSyncStorage = async (key) => {
 chrome.runtime.sendMessage({'message': 'getCalendarList'})
 
 chrome.storage.sync.get([preset_venue_sync_name, enabled_sync_name]).then((result) => {
-  console.log(result[preset_venue_sync_name])
   if( result[preset_venue_sync_name] == undefined || (result[preset_venue_sync_name].length === 1 && result[preset_venue_sync_name][0].trim().length === 0)){
     return
   }

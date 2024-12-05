@@ -24,9 +24,16 @@ Array(24).keys().forEach(hour => {
   }
 });
 
-const convertTimeStrToInt = (time12h) => {
-  
-}
+// const convertTimeStrToInt = (str) => {
+//   const regexResult = str.match(single_time_regex).slice(-2)
+//   let [hours, minutes = 0] = regexResult[0].split(':').map((str) => parseInt(str))
+//   hours = hours === 12 ? 0 : hours
+//   if (regexResult.slice(-1)[0] === 'pm') {
+//     hours += 12
+//   }
+
+//   return (hours * 60) + minutes
+// }
 
 function getEventTimes(text) {
 
@@ -70,16 +77,7 @@ function dayModeRender() {
   let venue_labels = []
 
   const compareTimes = (str1, str2) => {
-      let [a, b] = [str1, str2].map((str) => {
-        const regexResult = str.match(single_time_regex).slice(-2)
-        let [hours, minutes = 0] = regexResult[0].split(':').map((str) => parseInt(str))
-        hours = hours === 12 ? 0 : hours
-        if (regexResult.slice(-1)[0] === 'pm') {
-          hours += 12
-        }
-  
-        return (hours * 60) + minutes
-      })
+      let [a, b] = [str1, str2].map(convertTimeStrToInt)
       return b >= a
 
   }
@@ -328,7 +326,24 @@ function dayModeRender() {
       htmlBox.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venues[i]].length-1)*overlap_spacing)), "important")
       htmlBox.style.zIndex = "4"
     }
+
   })
-  console.log(busyTimes)
+  
+  const dateStamp = document.querySelector(day_view_datestamp)?.textContent.split(',')[0] ?? ''
+  const currentEvents = {}
+  events.map((e) => {
+    if (!(dateStamp in currentEvents)) {
+      currentEvents[dateStamp] = {}
+    }
+    
+    if (!([e.venue] in currentEvents[dateStamp])) {
+      currentEvents[dateStamp][e.venue] = []
+    }
+
+    currentEvents[dateStamp][e.venue].push(e.timestamp)
+  })
+  // current event data: {date : {venue: [timestamps]}}
+
+  chrome.storage.sync.set({[current_event_list_sync_name]: currentEvents})
 }
 

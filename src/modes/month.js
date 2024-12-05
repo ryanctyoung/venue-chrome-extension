@@ -46,6 +46,7 @@ function monthModeRender() {
     console.log(eventDetails)
   })
 
+  chrome.storage.sync.set({[current_event_list_sync_name]: []})
   console.log("End of MonthModeRender")
 
 }
