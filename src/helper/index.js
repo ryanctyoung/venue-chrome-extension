@@ -24,3 +24,18 @@ function convertTimeStrToInt(str) {
 
   return (hours * 60) + minutes
 }
+
+function parseVenuesFromString(str) {
+  return str.split(';').map(v => v.trim()) ?? []
+}
+
+function parseStringFromVenues(events) {
+  return events.join("; ") ?? []
+}
+
+function sortTimestamps(a, b) {
+  console.log(a,b)
+  let [ts1, ts2] = [a,b].map(s => convertTimeStrToInt(s.split(' to ')[0]))
+  console.log(ts1,ts2)
+  return ts1 > ts2 ? 1 : -1
+}

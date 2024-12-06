@@ -6,13 +6,13 @@ let inputDiv = null
 async function eventModalRender(modal) {
   const dropdowns = Array.from(modal.querySelectorAll(event_modal_location_selector))
 
-  function parseEventsFromString(str) {
-    return str.split(';').map(v => v.trim()) ?? []
-  }
+  // function parseVenuesFromString(str) {
+  //   return str.split(';').map(v => v.trim()) ?? []
+  // }
   
-  function parseStringFromEvents(events) {
-    return events.join("; ") ?? []
-  }
+  // function parseStringFromVenues(events) {
+  //   return events.join("; ") ?? []
+  // }
   
   // Time select dropdown: highlight all conflicting times
   let currentEvents = await chrome.storage.sync.get([current_event_list_sync_name]).then((result) => {
@@ -49,7 +49,7 @@ async function eventModalRender(modal) {
       button.onclick = buttonClick
       
       inputDiv = modal.querySelector(event_modal_location_focus_selector)
-      const existingVenues = parseEventsFromString(inputDiv.value) 
+      const existingVenues = parseVenuesFromString(inputDiv.value) 
       // console.log(existingVenues)
 
       const optionClick = (value) => {
@@ -62,29 +62,29 @@ async function eventModalRender(modal) {
         const dateStamp = modal.querySelector(event_modal_date_selector)?.textContent.split(',')[1].trim()
 
         if (inputDiv != null) {
-          const venueString = parseStringFromEvents(checkedBoxes)
+          const venueString = parseStringFromVenues(checkedBoxes)
           inputDiv.value = venueString
           inputDiv.click()
           
           //highlight conflicting times here
-          // time select dropdown selectors: div[class='w8UdJc']
           console.log(currentEvents)
-          console.log(dateStamp in currentEvents)
           if(dateStamp in currentEvents) {
-            let bookedTimes = currentEvents[dateStamp][venueString]
+            let bookedTimes = checkedBoxes.reduce((accum, venue) => accum.concat(currentEvents[dateStamp][venue]), []).sort(sortTimestamps)
+            console.log(bookedTimes)
+            // let bookedTimes = currentEvents[dateStamp][venueString]
             console.log(timeSelectDropdowns)
             let [startTimeDropdown, endTimeDropdown] = timeSelectDropdowns
             let j = 0
             
-            //TO DO: iteration through dropdown list and comparison to start times
-            for (let i = 0; i < bookedTimes.length; i++) {
-              while( j < startTimeDropdown.children.length)
-              {
+            //iteration through dropdown list and comparison to start times
+            for (let i = 0; i < bookedTimes?.length; i++) {
+              while( j < startTimeDropdown.children.length) {
                 let dropdownTimeInt = convertTimeStrToInt(startTimeDropdown.children[j].textContent)
                 let [startTimeInt, endTimeInt] = bookedTimes[i].split(' to ').map(convertTimeStrToInt)
-                console.log(`${startTimeInt} vs. ${dropdownTimeInt}`)  
-                if (dropdownTimeInt >= startTimeInt && dropdownTimeInt < endTimeInt) {
-                  console.log('red') 
+                if (dropdownTimeInt >= endTimeInt) {
+                  break;
+                }  
+                if (dropdownTimeInt >= startTimeInt) {
                   startTimeDropdown.children[j].style.color = 'red'
                 }
                 j++

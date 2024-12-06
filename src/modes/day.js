@@ -24,17 +24,6 @@ Array(24).keys().forEach(hour => {
   }
 });
 
-// const convertTimeStrToInt = (str) => {
-//   const regexResult = str.match(single_time_regex).slice(-2)
-//   let [hours, minutes = 0] = regexResult[0].split(':').map((str) => parseInt(str))
-//   hours = hours === 12 ? 0 : hours
-//   if (regexResult.slice(-1)[0] === 'pm') {
-//     hours += 12
-//   }
-
-//   return (hours * 60) + minutes
-// }
-
 function getEventTimes(text) {
 
   let startString = ''
@@ -336,11 +325,13 @@ function dayModeRender() {
       currentEvents[dateStamp] = {}
     }
     
-    if (!([e.venue] in currentEvents[dateStamp])) {
-      currentEvents[dateStamp][e.venue] = []
-    }
-
-    currentEvents[dateStamp][e.venue].push(e.timestamp)
+    let venues = parseVenuesFromString(e.venue)
+    venues.map(v => {
+      if (!([v] in currentEvents[dateStamp])) {
+        currentEvents[dateStamp][v] = []      
+      }
+      currentEvents[dateStamp][v].push(e.timestamp)
+    })
   })
   // current event data: {date : {venue: [timestamps]}}
 
