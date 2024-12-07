@@ -321,6 +321,9 @@ function dayModeRender() {
   const dateStamp = document.querySelector(day_view_datestamp)?.textContent.split(',')[0] ?? ''
   const currentEvents = {}
   events.map((e) => {
+    if (!e.element.hasAttribute(event_placeholder_attribute)) {
+      return
+    }
     if (!(dateStamp in currentEvents)) {
       currentEvents[dateStamp] = {}
     }

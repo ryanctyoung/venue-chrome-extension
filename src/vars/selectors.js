@@ -1,4 +1,9 @@
 const event_selector = "div[role=button][data-eventid]"
+
+// the inclusion of 'data-keyboardactiontype' is to prevent selecting the placeholder event element present during event creation
+const event_placeholder_attribute = "data-keyboardactiontype"
+
+
 // const event_selector = "div[role=button][class*='GTG3wb ChfiMc rFUW1c ']"
 const event_context_menu_selector = "div[class*='VfPpkd-xl07Ob-XxIAqe UQ5E0']"
 
@@ -53,8 +58,10 @@ const current_event_list_sync_name = "current_event_list"
 const empty_venue_placeholder = 'Other'
 
 const week_view_day_header_selector = "h2[class='hI2jVc']"
+const week_view_event_details_selector = "div[class='XuJrye']"
 const week_view_event_location_selector = "span[class='k7JKz'] , div[class*='lhydbb K9QN7e  EiZ8Dd']"
 const week_view_day_gridcell_selector = "[role='gridcell'][class~='BiKU4b']"
+const week_view_day_timeline_selector = "div[class='feMFof A3o4Oe']"
 const week_view_event_board_selector = "div[class='mDPmMe']"
 const week_view_event_title_selector = "span[class='I0UMhf']"
 const week_view_event_timestamp_selector = "span[class='b0NTye'], div[class='lhydbb gVNoLb  EiZ8Dd TuM9nf']"

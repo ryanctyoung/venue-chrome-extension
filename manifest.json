@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Venue Calendar",
-  "version": "1.300.1",
+  "version": "1.300.2",
   "description": "Implements column view based on location in Google Calendar.",
   "content_scripts": [
     {

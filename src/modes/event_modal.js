@@ -6,23 +6,12 @@ let inputDiv = null
 async function eventModalRender(modal) {
   const dropdowns = Array.from(modal.querySelectorAll(event_modal_location_selector))
 
-  // function parseVenuesFromString(str) {
-  //   return str.split(';').map(v => v.trim()) ?? []
-  // }
-  
-  // function parseStringFromVenues(events) {
-  //   return events.join("; ") ?? []
-  // }
-  
   // Time select dropdown: highlight all conflicting times
   let currentEvents = await chrome.storage.sync.get([current_event_list_sync_name]).then((result) => {
     const curr = result[current_event_list_sync_name]
     if( curr == undefined ||curr?.length == 0){
       return {}
     }
-
-    console.log(curr)
-
     return curr
 
   })
@@ -67,9 +56,8 @@ async function eventModalRender(modal) {
           inputDiv.click()
           
           //highlight conflicting times here
-          console.log(currentEvents)
           if(dateStamp in currentEvents) {
-            let bookedTimes = checkedBoxes.reduce((accum, venue) => accum.concat(currentEvents[dateStamp][venue]), []).sort(sortTimestamps)
+            let bookedTimes = checkedBoxes.reduce((accum, venue) => accum.concat(currentEvents[dateStamp][venue]), []).sort(sortTimestamps) ?? []
             console.log(bookedTimes)
             // let bookedTimes = currentEvents[dateStamp][venueString]
             console.log(timeSelectDropdowns)
@@ -77,10 +65,10 @@ async function eventModalRender(modal) {
             let j = 0
             
             //iteration through dropdown list and comparison to start times
-            for (let i = 0; i < bookedTimes?.length; i++) {
+            for (let i = 0; i < bookedTimes.length; i++) {
               while( j < startTimeDropdown.children.length) {
                 let dropdownTimeInt = convertTimeStrToInt(startTimeDropdown.children[j].textContent)
-                let [startTimeInt, endTimeInt] = bookedTimes[i].split(' to ').map(convertTimeStrToInt)
+                let [startTimeInt, endTimeInt] = bookedTimes[i]?.split(' to ').map(convertTimeStrToInt)
                 if (dropdownTimeInt >= endTimeInt) {
                   break;
                 }  

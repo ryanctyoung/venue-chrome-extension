@@ -1,9 +1,31 @@
+var month_day_stamp_regex
+
+(async () => {
+  const src = chrome.runtime.getURL("src/vars/regex.js");
+  ({month_day_stamp_regex} = await import(src));
+
+})();
+
 const columnMargins = week_view_day_header_column_margins // px
 
 function weekModeRender() {
 
   const numberOfColumns = preset_venues.length + 1
   var columnWidth = 0
+  const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
+    const eventDetailsText = event.querySelector(week_view_event_details_selector)?.textContent
+    const eventVenue = eventDetailsText.match(venue_regex)?.[0] ?? empty_venue_placeholder
+    const timeStamp = eventDetailsText.match(timestamp_regex)?.[0] ?? ''
+    const dateStamp = eventDetailsText.match(month_day_stamp_regex)?.[0] ?? ''
+
+
+    return {
+      element: event,
+      venue: eventVenue,
+      timeStamp,
+      date: dateStamp
+    }
+  })
 
   // install venue columns into each day on the week view
   // day : HTMLElement
@@ -54,7 +76,8 @@ function weekModeRender() {
       const index = day.getAttribute("data-column-index")
       multi_event_container.setAttribute("class", "venue-multi-event-container")
       multi_event_container.setAttribute("venue-index", index)
-      day.querySelector("[role='presentation']")?.appendChild(multi_event_container)
+      day.querySelector(week_view_day_timeline_selector)?.appendChild(multi_event_container)
+      console.log(day.querySelector(week_view_day_timeline_selector))
 
     }
     multi_event_container.replaceChildren()
@@ -72,13 +95,14 @@ function weekModeRender() {
   
   // organize events into their respective venues
   // event : HTMLElement
-  function createMultiEvents(event) {
-    const location = event.querySelector(week_view_event_location_selector)?.textContent ?? ""
-    const title = event.querySelector(week_view_event_title_selector)?.textContent ?? "(No Title)"
-    const timeStamp = event.querySelector(week_view_event_timestamp_selector)?.textContent ?? ""
-    const eventDimensions = event.getBoundingClientRect()
+  function createMultiEvents(e) {
+    const eventHTML = e.element
+    const location = eventHTML.querySelector(week_view_event_location_selector)?.textContent ?? ""
+    const title = eventHTML.querySelector(week_view_event_title_selector)?.textContent ?? "(No Title)"
+    const timeStamp = eventHTML.querySelector(week_view_event_timestamp_selector)?.textContent ?? ""
+    const eventDimensions = eventHTML.getBoundingClientRect()
 
-    const multi_event_container = event.closest(week_view_day_gridcell_selector)?.querySelector(week_view_multi_event_container_selector)
+    const multi_event_container = eventHTML.closest(week_view_day_gridcell_selector)?.querySelector(week_view_multi_event_container_selector)
     
     const venues = location.split(";").map(v => {
       v = v.trim()
@@ -93,7 +117,7 @@ function weekModeRender() {
 
       let htmlBox = null
       if (i === 0) {
-        htmlBox = event
+        htmlBox = eventHTML
       } else {
         htmlBox = document.createElement("div")
         // const titleDiv = document.createElement("div")
@@ -101,12 +125,12 @@ function weekModeRender() {
         // const subtitleDiv = document.createElement("div")
         // subtitleDiv.textContent = `${timeStamp} | ${venues[i]}`
 
-        htmlBox.style.setProperty("top", event.style.top)
+        htmlBox.style.setProperty("top", eventHTML.style.top)
         htmlBox.style.setProperty("padding", dec_to_px(multi_event_padding))
-        htmlBox.style.setProperty("height", dec_to_px(px_to_dec(event.style.height) - (2 * multi_event_border_size) - (2 * multi_event_padding)))
+        htmlBox.style.setProperty("height", dec_to_px(px_to_dec(eventHTML.style.height) - (2 * multi_event_border_size) - (2 * multi_event_padding)))
         eventWidth = eventWidth  - (2*columnMargins) - (2 * multi_event_padding)
         htmlBox.style.opacity = multi_event_opacity
-        htmlBox.style.backgroundColor = event.style.backgroundColor
+        htmlBox.style.backgroundColor = eventHTML.style.backgroundColor
         htmlBox.style.border = `${dec_to_px(multi_event_border_size)} dotted black`
         htmlBox.style.borderRadius = `${dec_to_px(multi_event_border_radius)}`
         // htmlBox.style.fontSize = `${dec_to_px(multi_event_fontSize)}`
@@ -117,7 +141,7 @@ function weekModeRender() {
 
         htmlBox.onclick = (clickevent) => {
           clickevent.stopPropagation()
-          event.click()
+          eventHTML.click()
         }
 
         // htmlBox.append(titleDiv, subtitleDiv)
@@ -151,6 +175,26 @@ function weekModeRender() {
       htmlBox.style.zIndex = 25
     }
   }
-  Array.from(document.querySelectorAll(event_selector)).map(createMultiEvents)
-  chrome.storage.sync.set({[current_event_list_sync_name]: []})
+  events.map(createMultiEvents)
+  const currentEvents = {}
+  events.map((e) => {
+    if (!e.element.hasAttribute(event_placeholder_attribute)) {
+      return
+    }
+
+    if (!(e.date in currentEvents)) {
+      currentEvents[e.date] = {}
+    }
+    
+    let venues = parseVenuesFromString(e.venue)
+    venues.map(v => {
+      if (!([v] in currentEvents[e.date])) {
+        currentEvents[e.date][v] = []      
+      }
+      currentEvents[e.date][v].push(e.timeStamp)
+      // console.log(currentEvents[e.date][v])
+    })
+  })
+
+  chrome.storage.sync.set({[current_event_list_sync_name]: currentEvents})
 }
