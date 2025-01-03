@@ -12,6 +12,7 @@ async function eventModalRender(modal) {
     if( curr == undefined ||curr?.length == 0){
       return {}
     }
+    console.log(curr)
     return curr
 
   })

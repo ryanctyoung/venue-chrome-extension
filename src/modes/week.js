@@ -77,11 +77,8 @@ function weekModeRender() {
       multi_event_container.setAttribute("class", "venue-multi-event-container")
       multi_event_container.setAttribute("venue-index", index)
       day.querySelector(week_view_day_timeline_selector)?.appendChild(multi_event_container)
-      console.log(day.querySelector(week_view_day_timeline_selector))
-
     }
     multi_event_container.replaceChildren()
-
   })
 
   const presetVenueSpacingMap = ((arr) => {
