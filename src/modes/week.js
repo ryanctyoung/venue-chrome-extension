@@ -55,10 +55,10 @@ function weekModeRender() {
         columnContainer?.appendChild(columnDiv)
   
         // apply on hover tooltip
-        const toolTipDiv = document.createElement("div")
-        toolTipDiv.className = day_header_tooltip_classname
-        toolTipDiv.textContent = venueName
-        columnDiv?.appendChild(toolTipDiv)
+        const venueToolTopDiv = document.createElement("div")
+        venueToolTopDiv.className = day_header_tooltip_classname
+        venueToolTopDiv.textContent = venueName
+        columnDiv?.appendChild(venueToolTopDiv)
       }
       day?.appendChild(columnContainer)
     }
@@ -89,7 +89,18 @@ function weekModeRender() {
     return obj
   })(preset_venues)
 
+
+
+  // add tooltip with Title, Location, Timestamp.
+  // create a singleton tooltip that moves to each event 
+  const toolTipDiv = document.querySelector(`div[class=${week_view_event_tooltip_classname}]`) ?? document.createElement("div")
+  toolTipDiv.className = week_view_event_tooltip_classname
+  const weekBoard = document.querySelector(week_view_event_board_selector)
+  weekBoard.appendChild(toolTipDiv)
   
+
+
+
   // organize events into their respective venues
   // event : HTMLElement
   function createMultiEvents(e) {
@@ -106,6 +117,8 @@ function weekModeRender() {
       const result = preset_venues.includes(v) ? v: empty_venue_placeholder
       return result
     })
+
+    
 
     for(let i = 0; i < venues.length ; i++) {
       const index = preset_venues.findIndex((label) => venues[i] === label) ?? 0
@@ -145,23 +158,30 @@ function weekModeRender() {
         multi_event_container?.appendChild(htmlBox)
       }
 
-      // add tooltip with Title, Location, Timestamp
-      const toolTipDiv = document.createElement("div")
-      toolTipDiv.className = week_view_event_tooltip_classname
-      toolTipDiv.textContent = `${title} @ ${location}`
+      // add tooltip with Title, Location, Timestamp.
+      // create a singleton tooltip that moves to each event 
+      // const toolTipDiv = document.createElement("div")
+      // toolTipDiv.className = week_view_event_tooltip_classname
+      
       const defaultBorder = i === 0 ? 'none' : `${dec_to_px(multi_event_border_size)} dotted black`
-      htmlBox?.appendChild(toolTipDiv)
-      htmlBox.onmouseover = () => {
+      htmlBox.onmouseover = (e) => {
+        const targetRect = e.target.getBoundingClientRect()
+        const boardRect = weekBoard.getBoundingClientRect()
+        // console.log(targetRect)
+        toolTipDiv.textContent = `${title} @ ${location}`
         htmlBox.style.border = `${dec_to_px(multi_event_border_size)} double black`
         toolTipDiv.style.visibility = 'visible'
-        htmlBox.style.zIndex = 26
+        console.log(htmlBox)
+        toolTipDiv.style.left = targetRect.left - boardRect.left +  "px"
+        toolTipDiv.style.top = targetRect.top - boardRect.top + "px"
+        // htmlBox.style.zIndex = 10
 
       }
 
       htmlBox.onmouseleave = () => {
         htmlBox.style.border = defaultBorder
         toolTipDiv.style.visibility = 'hidden'
-        htmlBox.style.zIndex = 25
+        // htmlBox.style.zIndex = 10
       }
 
       // apply universal styling
@@ -169,7 +189,7 @@ function weekModeRender() {
       htmlBox.style.setProperty("width", dec_to_px(eventWidth), "important")
       htmlBox.style.setProperty("margin", `0px ${dec_to_px(columnMargins)}`, "important")
       htmlBox.style.setProperty("left", dec_to_px((columnWidth + (2 *columnMargins)) * eventSpacing), "important")
-      htmlBox.style.zIndex = 25
+      // htmlBox.style.zIndex = 10
     }
   }
   events.map(createMultiEvents)

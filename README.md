@@ -9,5 +9,4 @@
 
   Tickets:
   - Venue setting got erased
-    Chrome local storage variable 'default_venues' potentially lost track
-    Calendar description: venues added on unnecessarily instead of replacing old venue settings
+  - Overlap of existing events: use tooltip to ammeliorate confusion
