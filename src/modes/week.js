@@ -74,7 +74,7 @@ function weekModeRender() {
     if (multi_event_container === null) {
       multi_event_container = document.createElement("div")
       const index = day.getAttribute("data-column-index")
-      multi_event_container.setAttribute("class", "venue-multi-event-container")
+      multi_event_container.setAttribute("class", week_view_multi_event_container_class)
       multi_event_container.setAttribute("venue-index", index)
       day.querySelector(week_view_day_timeline_selector)?.appendChild(multi_event_container)
     }
@@ -92,8 +92,9 @@ function weekModeRender() {
 
 
   // add tooltip with Title, Location, Timestamp.
-  // create a singleton tooltip that moves to each event 
-  const toolTipDiv = document.querySelector(`div[class=${week_view_event_tooltip_classname}]`) ?? document.createElement("div")
+  // singleton tooltip that moves to each event 
+  const toolTip = new EventToolTip(document.querySelector(`div[class=${week_view_event_tooltip_classname}]`) ?? document.createElement("div"))
+  const toolTipDiv = toolTip.html
   toolTipDiv.className = week_view_event_tooltip_classname
   const weekBoard = document.querySelector(week_view_event_board_selector)
   weekBoard.appendChild(toolTipDiv)
@@ -107,8 +108,8 @@ function weekModeRender() {
     const eventHTML = e.element
     const location = eventHTML.querySelector(week_view_event_location_selector)?.textContent ?? ""
     const title = eventHTML.querySelector(week_view_event_title_selector)?.textContent ?? "(No Title)"
-    const timeStamp = eventHTML.querySelector(week_view_event_timestamp_selector)?.textContent ?? ""
-    const eventDimensions = eventHTML.getBoundingClientRect()
+    // const timeStamp = eventHTML.querySelector(week_view_event_timestamp_selector)?.textContent ?? ""
+    // const eventDimensions = eventHTML.getBoundingClientRect()
 
     const multi_event_container = eventHTML.closest(week_view_day_gridcell_selector)?.querySelector(week_view_multi_event_container_selector)
     
@@ -119,33 +120,33 @@ function weekModeRender() {
     })
 
     
-
+    // create clone event elements for multi-venue events
     for(let i = 0; i < venues.length ; i++) {
       const index = preset_venues.findIndex((label) => venues[i] === label) ?? 0
       const eventSpacing = presetVenueSpacingMap[venues[i]] ?? preset_venues.length
       let eventWidth = columnWidth
 
       let htmlBox = null
-      if (i === 0) {
+      if (i === 0) { // this is the original event element
         htmlBox = eventHTML
-      } else {
+      } else { // create multi-event clone
         htmlBox = document.createElement("div")
-        // const titleDiv = document.createElement("div")
-        // titleDiv.textContent = title
-        // const subtitleDiv = document.createElement("div")
-        // subtitleDiv.textContent = `${timeStamp} | ${venues[i]}`
+        htmlBox.className = week_view_multi_event_class
+        const titleDiv = document.createElement("div")
+        titleDiv.textContent = title
+        titleDiv.className = week_view_multi_event_title_class
+        titleDiv.style.setProperty("visibility", week_view_event_detail_visibility)
+
+        const venueDiv = document.createElement("div")
+        venueDiv.textContent = location
+        venueDiv.className = week_view_multi_event_venue_class
+        venueDiv.style.setProperty("visibility", week_view_event_detail_visibility)
 
         htmlBox.style.setProperty("top", eventHTML.style.top)
-        htmlBox.style.setProperty("padding", dec_to_px(multi_event_padding))
-        htmlBox.style.setProperty("height", dec_to_px(px_to_dec(eventHTML.style.height) - (2 * multi_event_border_size) - (2 * multi_event_padding)))
-        eventWidth = eventWidth  - (2*columnMargins) - (2 * multi_event_padding)
-        htmlBox.style.opacity = multi_event_opacity
+        htmlBox.style.setProperty("height", eventHTML.style.height)
+
+
         htmlBox.style.backgroundColor = eventHTML.style.backgroundColor
-        htmlBox.style.border = `${dec_to_px(multi_event_border_size)} dotted black`
-        htmlBox.style.borderRadius = `${dec_to_px(multi_event_border_radius)}`
-        // htmlBox.style.fontSize = `${dec_to_px(multi_event_fontSize)}`
-        // subtitleDiv.style.fontSize = `${dec_to_px(multi_event_subtitle_fontSize)}`
-        // htmlBox.style.color = `${multi_event_fontColor}`
         htmlBox.style.cursor = multi_event_pointer
         htmlBox.style.setProperty("position", multi_event_position_style)
 
@@ -154,41 +155,48 @@ function weekModeRender() {
           eventHTML.click()
         }
 
-        // htmlBox.append(titleDiv, subtitleDiv)
+        htmlBox.append(titleDiv, venueDiv)
         multi_event_container?.appendChild(htmlBox)
       }
 
-      // add tooltip with Title, Location, Timestamp.
-      // create a singleton tooltip that moves to each event 
-      // const toolTipDiv = document.createElement("div")
-      // toolTipDiv.className = week_view_event_tooltip_classname
-      
-      const defaultBorder = i === 0 ? 'none' : `${dec_to_px(multi_event_border_size)} dotted black`
-      htmlBox.onmouseover = (e) => {
+
+      // Event Highlighting on Mouse Over
+      const defaultBorder = `${dec_to_px(week_event_border_size)} solid black`
+      htmlBox.onmousemove = (e) => {
         const targetRect = e.target.getBoundingClientRect()
         const boardRect = weekBoard.getBoundingClientRect()
-        // console.log(targetRect)
-        toolTipDiv.textContent = `${title} @ ${location}`
-        htmlBox.style.border = `${dec_to_px(multi_event_border_size)} double black`
+        toolTip.clear()
+        // toolTipDiv.textContent = `${title} @ ${location}`
+        htmlBox.style.border = `${dec_to_px(week_event_border_size_highlighted)} solid black`
         toolTipDiv.style.visibility = 'visible'
-        console.log(htmlBox)
-        toolTipDiv.style.left = targetRect.left - boardRect.left +  "px"
+        toolTipDiv.style.left = targetRect.left - boardRect.left + 20 +  "px"
         toolTipDiv.style.top = targetRect.top - boardRect.top + "px"
-        // htmlBox.style.zIndex = 10
 
+
+        // acquire all events at cursor regardless of z-index
+        const elements = document.elementsFromPoint(e.clientX, e.clientY).filter(element => element.matches(event_selector) || element.matches(week_view_multi_event_selector));
+        for (const element of elements) {
+          const elementTitle = element.querySelector(week_view_event_title_selector)?.textContent ?? (element.querySelector(`div[class=${week_view_multi_event_title_class}]`)?.textContent ?? "(No Title)")
+          const elementvenue = element.querySelector(week_view_event_location_selector)?.textContent ?? (element.querySelector(`div[class=${week_view_multi_event_venue_class}]`)?.textContent ?? "Other")
+
+          toolTip.add(elementTitle, elementvenue)
+        }        
       }
 
       htmlBox.onmouseleave = () => {
         htmlBox.style.border = defaultBorder
         toolTipDiv.style.visibility = 'hidden'
-        // htmlBox.style.zIndex = 10
+        toolTip.clear()
       }
 
       // apply universal styling
       htmlBox.querySelector(event_details_selector)?.style.setProperty("visibility", week_view_event_detail_visibility)
       htmlBox.style.setProperty("width", dec_to_px(eventWidth), "important")
+      htmlBox.style.border = defaultBorder
       htmlBox.style.setProperty("margin", `0px ${dec_to_px(columnMargins)}`, "important")
       htmlBox.style.setProperty("left", dec_to_px((columnWidth + (2 *columnMargins)) * eventSpacing), "important")
+      htmlBox.style.borderRadius = `${dec_to_px(week_event_border_radius)}`
+      htmlBox.style.opacity = week_event_opacity
       // htmlBox.style.zIndex = 10
     }
   }
@@ -209,7 +217,6 @@ function weekModeRender() {
         currentEvents[e.date][v] = []      
       }
       currentEvents[e.date][v].push(e.timeStamp)
-      // console.log(currentEvents[e.date][v])
     })
   })
 

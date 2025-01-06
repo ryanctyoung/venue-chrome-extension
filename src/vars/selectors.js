@@ -65,4 +65,5 @@ const week_view_day_timeline_selector = "div[class='feMFof A3o4Oe']"
 const week_view_event_board_selector = "div[class='mDPmMe']"
 const week_view_event_title_selector = "span[class='I0UMhf']"
 const week_view_event_timestamp_selector = "span[class='b0NTye'], div[class='lhydbb gVNoLb  EiZ8Dd TuM9nf']"
-const week_view_multi_event_container_selector = "div[class='venue-multi-event-container']"
+const week_view_multi_event_container_selector = `div[class=${week_view_multi_event_container_class}]`
+const week_view_multi_event_selector = `div[class=${week_view_multi_event_class}]`
