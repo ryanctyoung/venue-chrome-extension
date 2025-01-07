@@ -29,6 +29,8 @@ const create_event_interact_selector = "div[class~='XsRa1c']" // there is a trai
 const day_view_event_board = "div[class='feMFof A3o4Oe']"
 const day_view_multi_event_container = "div[class='venue-multi-event-container']"
 const day_view_datestamp = "div[class='UyW9db']"
+const day_view_multi_event_selector = `div[class=${day_view_multi_event_class}]`
+
 
 
 const event_item_title = "span[class='I0UMhf']"
@@ -56,6 +58,7 @@ const enabled_sync_name = "venue_enable"
 const preset_venue_sync_name = "venue_default_venues"
 const current_event_list_sync_name = "current_event_list"
 const empty_venue_placeholder = 'Other'
+
 
 const week_view_day_header_selector = "h2[class='hI2jVc']"
 const week_view_event_details_selector = "div[class='XuJrye']"

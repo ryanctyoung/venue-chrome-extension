@@ -89,7 +89,7 @@ function dayModeRender() {
 
   // query for event Elements - {element: HTMLElement, venue: string, timestamp: string}
   const events = Array.from(document.querySelectorAll(event_selector)).map(event => {
-
+    event.style.opacity = 1
     let eventVenue = event.outerText.match(venue_regex)
     return {
       element: event,
@@ -243,6 +243,11 @@ function dayModeRender() {
   }
   multi_event_container.replaceChildren()
 
+
+  // Scroll manager for overlapping events
+  const scrollManager = new EventScroll(document.querySelector(`div[class=${day_view_event_scroll_classname}]`) ?? document.createElement("div"))
+
+
   events.map(e => {
     const eventTimeStamp = e.element.querySelector(event_timestamp_selector)?.textContent ?? ""
     // form - {startTime, endTime}
@@ -280,6 +285,7 @@ function dayModeRender() {
         htmlBox = e.element
       } else {
         htmlBox = document.createElement("div")
+        htmlBox.className = day_view_multi_event_class
         const title = document.createElement("div")
         title.textContent = `${e.title}`
         const subtitle = document.createElement("div")
@@ -288,28 +294,49 @@ function dayModeRender() {
         htmlBox.style.setProperty("top", e.element.style.top)
         htmlBox.style.setProperty("padding", dec_to_px(multi_event_padding))
         htmlBox.style.setProperty("height", dec_to_px(px_to_dec(e.element.style.height) - (2 * multi_event_border_size) - (2 * multi_event_padding)))
-        htmlBox.style.opacity = multi_event_opacity
+        htmlBox.style.opacity = 1
         htmlBox.style.backgroundColor = e.element.style.backgroundColor
-        htmlBox.style.border = `${dec_to_px(multi_event_border_size)} solid black`
-        htmlBox.style.borderRadius = `${dec_to_px(multi_event_border_radius)}`
+
         htmlBox.style.fontSize = `${dec_to_px(multi_event_fontSize)}`
         subtitle.style.fontSize = `${dec_to_px(multi_event_subtitle_fontSize)}`
         htmlBox.style.color = `${multi_event_fontColor}`
         htmlBox.style.cursor = multi_event_pointer
         htmlBox.style.setProperty("position", multi_event_position_style)
 
+        htmlBox.append(title, subtitle)
+        multi_event_container.appendChild(htmlBox)
+      }
+      
+      // create event handlers for the boxes
+      (() => {
+        htmlBox.onmousemove = (e) => {
+          // acquire all events at cursor regardless of z-index
+          const elements = document.elementsFromPoint(e.clientX, e.clientY).filter(element => element.matches(event_selector) || element.matches(day_view_multi_event_selector));
+          scrollManager.enter(elements)      
+        }
+  
+        htmlBox.onmouseexit = (e) => {
+          scrollManager.exit()
+        }
+  
         htmlBox.onclick = (clickevent) => {
           clickevent.stopPropagation()
           e.element.click()
         }
-        // htmlBox.setAttribute("data-eventchip", true)
-        // htmlBox.setAttribute("data-eventid", e.element.getAttribute("data-eventid"))
+  
+        htmlBox.onwheel = (e) => {
+          console.log('onwheel')
+          e.preventDefault()
+          scrollManager.scroll(e.deltaY)     
+        }
+      })()
 
-        htmlBox.append(title, subtitle)
-        multi_event_container.appendChild(htmlBox)
-      }
+
+      // universal styling for both original and clone events
 
       htmlBox.querySelector(event_details_selector)?.style.setProperty("visibility", day_view_event_detail_visibility)
+      htmlBox.style.border = `${dec_to_px(multi_event_border_size)} solid black`
+      htmlBox.style.borderRadius = `${dec_to_px(multi_event_border_radius)}`
       htmlBox.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) - (2 * multi_event_padding)), "important")
       htmlBox.style.setProperty("margin", `0 ${dec_to_px(column_margin)} 0 ${dec_to_px(column_margin)}`, "important")
       htmlBox.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venues[i]].length-1)*overlap_spacing)), "important")

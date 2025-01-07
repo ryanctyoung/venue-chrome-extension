@@ -20,6 +20,7 @@
         "src/language.js",
 
         "src/components/event_tooltip.js",
+        "src/components/event_scroll.js",
 
         "src/modes/day.js",
         "src/modes/week.js",
