@@ -248,7 +248,7 @@ function dayModeRender() {
   const scrollManager = new EventScroll(document.querySelector(`div[class=${day_view_event_scroll_classname}]`) ?? document.createElement("div"))
 
 
-  events.map(e => {
+  events.map(e => { //column mapper
     const eventTimeStamp = e.element.querySelector(event_timestamp_selector)?.textContent ?? ""
     // form - {startTime, endTime}
     timeStamp = getEventTimes(eventTimeStamp)
@@ -277,12 +277,13 @@ function dayModeRender() {
     // loop here through venues
     for(let i = 0; i < venues.length ; i++) {
       const index = venue_labels.findIndex((label) => venues[i] === label) ?? 0
-      const finalSpacing = initialSpacing + (index*max_column_width)
-
+      const finalSpacing = initialSpacing + ((index*max_column_width) + 1) + columnMargins
+      
 
       let htmlBox = null
       if (i === 0) {
         htmlBox = e.element
+        htmlBox.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) ), "important")
       } else {
         htmlBox = document.createElement("div")
         htmlBox.className = day_view_multi_event_class
@@ -293,7 +294,8 @@ function dayModeRender() {
 
         htmlBox.style.setProperty("top", e.element.style.top)
         htmlBox.style.setProperty("padding", dec_to_px(multi_event_padding))
-        htmlBox.style.setProperty("height", dec_to_px(px_to_dec(e.element.style.height) - (2 * multi_event_border_size) - (2 * multi_event_padding)))
+        htmlBox.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) - (2 * multi_event_padding)), "important")
+        htmlBox.style.setProperty("height", dec_to_px(px_to_dec(e.element.style.height) - (2 * multi_event_padding)))
         htmlBox.style.opacity = 1
         htmlBox.style.backgroundColor = e.element.style.backgroundColor
 
@@ -319,11 +321,6 @@ function dayModeRender() {
           scrollManager.exit()
         }
   
-        htmlBox.onclick = (clickevent) => {
-          clickevent.stopPropagation()
-          e.element.click()
-        }
-  
         htmlBox.onwheel = (e) => {
           console.log('onwheel')
           e.preventDefault()
@@ -337,9 +334,10 @@ function dayModeRender() {
       htmlBox.querySelector(event_details_selector)?.style.setProperty("visibility", day_view_event_detail_visibility)
       htmlBox.style.border = `${dec_to_px(multi_event_border_size)} solid black`
       htmlBox.style.borderRadius = `${dec_to_px(multi_event_border_radius)}`
-      htmlBox.style.setProperty("width", dec_to_px(max_column_width - (2*column_margin) - (2 * multi_event_padding)), "important")
+
+
       htmlBox.style.setProperty("margin", `0 ${dec_to_px(column_margin)} 0 ${dec_to_px(column_margin)}`, "important")
-      htmlBox.style.setProperty("left", dec_to_px(finalSpacing + ((columnMapper[venues[i]].length-1)*overlap_spacing)), "important")
+      htmlBox.style.setProperty("left", dec_to_px(finalSpacing + 2 * ((columnMapper[venues[i]].length)*overlap_spacing)))
       htmlBox.style.zIndex = "4"
     }
 

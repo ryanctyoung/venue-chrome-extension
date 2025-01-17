@@ -17,7 +17,7 @@ const multi_event_fontColor = "white"
 const multi_event_position_style = "absolute"
 const multi_event_pointer = "pointer"
 
-const overlap_spacing = 5
+const overlap_spacing = 3
 const font_size = 15
 const minutes_in_hour = 60
 const minutes_in_half_day = 12 * minutes_in_hour

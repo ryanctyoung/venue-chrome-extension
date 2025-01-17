@@ -22,11 +22,15 @@ function EventScroll(div) {
     if (list.length == 0) {
       return
     }
-    console.log(delta)
-    list[index].style.zIndex = '0'
-    index =  delta < 0 ? Math.max(0, index - 1) : Math.min(list.length - 1, index + 1)
-    console.log(index)
-    list[index].style.zIndex = '100'
+    let tempLeft = list[index].style.left
+    list[index].style.zIndex = '4'
+    nextIndex =  index >= list.length - 1 ? 0 : index + 1
+    let oldLeft = list[nextIndex].style.left
+    list[index].style.left = oldLeft
+    list[nextIndex].style.left = tempLeft
+
+    list[nextIndex].style.zIndex = '100'
+    index = nextIndex
   }
 
 
